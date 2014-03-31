@@ -38,7 +38,7 @@ public class Space {
 		for (Objects obj : object_list) {
 			if (obj.getClass() == Craft.class) {
 				g.setColor(obj.color);
-				g.drawString(((Craft)obj).name+" : "+ ((Craft)obj).score, 5, score_pos);
+				g.drawString(((Craft)obj).name+" : "+ ((Craft)obj).score + " : " + ((Craft)obj).generation  , 5, score_pos);
 				score_pos += 12;
 			}
 			obj.draw(g);
@@ -66,7 +66,6 @@ public class Space {
 		}
 		object_list = tmp;
 	}
-	
 	
 
 	public void kill(){

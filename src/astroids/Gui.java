@@ -12,17 +12,28 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
 public class Gui extends JFrame{
 	public Gui(){
 		super();
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    //super("Fullscreen");
+        setUndecorated(true);
+        setVisible(true);
+        //GraphicsEnvironment graphicsEnvironment=GraphicsEnvironment.getLocalGraphicsEnvironment();
+        //Rectangle maximumWindowBounds=graphicsEnvironment.getMaximumWindowBounds();
+        //setBounds(maximumWindowBounds);
+	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public static void main(String[] args) {
@@ -44,9 +55,9 @@ public class Gui extends JFrame{
 		
 		Space s = new Space(width, height);
 		
-		int number_of_crafts = 10;
-		int number_of_asteroids = 20;
-		long game_time = 7000;
+		int number_of_crafts = 5;
+		int number_of_asteroids = 15;
+		long game_time = 10000;
 		long update_time = 10;
 		
 		Craft[] crafts = new Craft[number_of_crafts];
@@ -70,8 +81,9 @@ public class Gui extends JFrame{
 		//s.print();
 		
 		long time;
-		long super_time = System.currentTimeMillis(); 
-		
+		long super_time = System.currentTimeMillis();
+		int step = 0;
+		int generation = 0;
 		while(true){
 			
 			s = new Space(width, height);
@@ -80,6 +92,7 @@ public class Gui extends JFrame{
 				crafts[i].kill_me=false;
 				crafts[i].setPos(Vu.random(0, width, 0, height));
 				crafts[i].setDir(Vu.random(-1, 1, -1, 1));
+				
 				s.addObject(crafts[i]);
 			}
 			
@@ -111,6 +124,43 @@ public class Gui extends JFrame{
 				if(System.currentTimeMillis()-super_time > game_time){
 					break;
 				}
+			}
+			step++;
+			if(step % 10 == 0){
+				generation++;
+				System.out.println("Having sex!");
+				
+				Craft best = crafts[0];
+				for (Craft craft : crafts) {
+					if(craft.score >= best.score){
+						best = craft;
+					}
+				}
+				
+				Craft second =  crafts[0];
+				for (Craft craft : crafts) {
+					if(craft.score >= second.score && craft != best){
+						second = craft;
+					}
+				}
+				
+				int worst = 0;
+				for (int i = 0; i < crafts.length; i++) {
+					if(crafts[i].score < crafts[worst].score){
+						worst = i;
+					}
+				}
+				crafts[worst] = best.clone();
+				crafts[worst].mate(second);
+				crafts[worst].generation = generation;
+				
+				
+				for (Craft craft : crafts) {
+					craft.score = 0;
+					//craft.generation++;
+				}
+				
+				
 			}
 		}
 	}

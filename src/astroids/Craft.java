@@ -20,10 +20,12 @@ public class Craft extends Objects{
 	private double[] left_vector;
 	private double[] right_end_vector;
 	private double[] right_vector;
+	private double mutation_probability = 0.1;
 	public int score;
 	public String name;
+	public int generation;
 	
-	HashMap<Fov, Decision> decision_list;
+	HashMap<Fov, Decision> decision_list = new HashMap<Fov, Decision>(200);
 
 	public Craft(double[] pos, double[] dir, double[] vel){
 		this.pos = pos.clone();
@@ -33,15 +35,14 @@ public class Craft extends Objects{
 		super.type = Space.Types.SHIP;
 		super.color = Color.CYAN;
 		super.radius = 4;
+		super.kill_me = false;
+		super.fires = false;
 		left_end_vector = Vu.rotate(dir,fov_angle*2);
 		left_vector = Vu.rotate(dir,fov_angle/2);
 		right_end_vector = Vu.rotate(dir,-fov_angle*2);
 		right_vector = Vu.rotate(dir,-fov_angle/2);
-		this.decision_list = new HashMap<Fov, Decision>(200);
-		this.kill_me = false;
-		this.fires = false;
-		
-		this.score = 0;
+		generation = 0;
+		score = 0;
 		generateName();
 	}
 	
@@ -95,7 +96,7 @@ public class Craft extends Objects{
 		//System.out.println(fires);
 	}
 	
-	public void make_decision(Fov fov){
+	private void make_decision(Fov fov){
 		if(!decision_list.containsKey(fov)){
 			decision_list.put(fov, new Decision());
 		}else{
@@ -145,7 +146,7 @@ public class Craft extends Objects{
 		bounce(normal);
 	}
 	
-	public void populateFov(Space s){
+	private void populateFov(Space s){
 		fov = new Fov();
 		left_end_vector = Vu.normalize(Vu.rotate(dir,fov_angle*2));
 		left_vector = Vu.normalize(Vu.rotate(dir,fov_angle/2));
@@ -254,7 +255,7 @@ public class Craft extends Objects{
 		
 	}
 		
-	public void generateName(){
+	private void generateName(){
 		String[] first = {"Millenium","Steel","Iron","Space","Light","Star","Stellar","Lazer","Galactic","Icarus","Orion","Sky"};
 		String[] second = {"Falcon", "Eagle", "Hawk","Fighter","Warrior","Lightning","Killer","Wing"};
 		this.name = first[(int)(Math.random()*first.length)] + " "+ second[(int)(Math.random()*second.length)];
@@ -277,12 +278,37 @@ public class Craft extends Objects{
 		
 	}
 	
+	public Craft clone(){
+		Craft clone = new Craft(this.pos, this.dir, this.vel);
+		clone.fov = this.fov;
+		clone.decision_list = this.decision_list;
+		clone.color = this.color;
+		clone.score = 0;
+		
+		return clone;
+	}
+	
+	public void mate(Craft daddy){
+		for (Fov fov : daddy.decision_list.keySet()) {
+			if(Math.random() >= 0.5){
+				this.decision_list.put(fov, daddy.decision_list.get(fov));
+			}
+		}
+		this.color = new Color(this.color.getRed(), (this.color.getGreen()/2)+(daddy.color.getGreen()/2), daddy.color.getBlue());
+	
+		if(Math.random() <= mutation_probability){
+			int s = (int)(Math.random()*decision_list.size());
+			decision_list.put((Fov) decision_list.keySet().toArray()[s], new Decision());
+			this.color = new Color(255-this.color.getRed(),255-this.color.getGreen(),255-this.color.getBlue());
+		}
+	}
+	
 	public class Fov{
 		
 		//Why can't I put enums in local classes????
 		private int[] heading; 	//{left,middle,right} -1 is heading left, 0 is heading straight, 1 is heading right
 		private Space.Types[] type;	//{left,middle,right}
-		private double heading_threshold =(1/Math.sqrt(100));
+		private double heading_threshold =(1/Math.sqrt(200));
 		
 		public Fov(){
 			this.heading = new int[3];
