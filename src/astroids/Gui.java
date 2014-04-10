@@ -27,12 +27,10 @@ import javax.swing.SwingUtilities;
 public class Gui extends JFrame{
 	public Gui(){
 		super();
-	    //super("Fullscreen");
+	  
         setUndecorated(true);
         setVisible(true);
-        //GraphicsEnvironment graphicsEnvironment=GraphicsEnvironment.getLocalGraphicsEnvironment();
-        //Rectangle maximumWindowBounds=graphicsEnvironment.getMaximumWindowBounds();
-        //setBounds(maximumWindowBounds);
+
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
@@ -40,13 +38,13 @@ public class Gui extends JFrame{
 		// TODO Auto-generated method stub
 		
 		Gui g = new Gui();
-		int width = 1000;
-		int height= 1000;
-		Comp c = new Comp(width,height);
+		int width = 1080;
+		int height= 1080;
+		Comp1 c = new Comp1(width,height);
 		
 		g.add(c);
 
-		g.setLayout(new FlowLayout());
+		g.setLayout(new FlowLayout(0, 0, 0));
 		g.pack();		
 
 		c.setVisible(true);
@@ -55,10 +53,10 @@ public class Gui extends JFrame{
 		
 		Space s = new Space(width, height);
 		
-		int number_of_crafts = 5;
-		int number_of_asteroids = 15;
-		long game_time = 10000;
-		long update_time = 10;
+		int number_of_crafts = 25;
+		int number_of_asteroids = 0;
+		long game_time = 20000;
+		long update_time = 1;
 		
 		Craft[] crafts = new Craft[number_of_crafts];
 		for(int i = 0; i < number_of_crafts; i++){
@@ -121,12 +119,12 @@ public class Gui extends JFrame{
 				while(System.currentTimeMillis()- time < update_time){}
 	
 				c.clear(c.image.createGraphics());
-				if(System.currentTimeMillis()-super_time > game_time){
+				if(System.currentTimeMillis()-super_time > game_time || s.object_list.size() <= 1){
 					break;
 				}
 			}
 			step++;
-			if(step % 10 == 0){
+			if(step % 5 == 0){
 				generation++;
 				System.out.println("Having sex!");
 				
@@ -171,12 +169,12 @@ public class Gui extends JFrame{
  * 
  * */
 @SuppressWarnings("serial")
-class Comp extends JComponent{
+class Comp1 extends JComponent{
 	BufferedImage image;
 	int height;
 	int width;
 	
-	public Comp(int width, int height){
+	public Comp1(int width, int height){
 		super();
 		this.height = height;
 		this.width = width;
@@ -187,8 +185,7 @@ class Comp extends JComponent{
 	public void paintComponent(Graphics g1){
 		super.paintComponent(g1);
 		Graphics2D g = (Graphics2D) g1;
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			    RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g.drawImage(image, null,0,0);
 	}
 	

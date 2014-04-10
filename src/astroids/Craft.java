@@ -3,6 +3,7 @@ package astroids;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,16 +12,17 @@ public class Craft extends Objects{
 
 	Fov fov;
 	public enum Action{ROTATE_RIGHT,ROTATE_LEFT,ACCELERATE,FIRE,NOTHING}
-	private double thrust_power = 0.1; 
-	private double rotation_constant = Math.PI/40;
+	private double thrust_power = .5; 
+	private double rotation_constant = Math.PI/30;
 	private double fov_angle = Math.PI/12;
-	private double max_speed = 2;
+	private double max_speed = 7;
 	
 	private double[] left_end_vector;
 	private double[] left_vector;
 	private double[] right_end_vector;
 	private double[] right_vector;
 	private double mutation_probability = 0.1;
+	private Fuselage fuselage;
 	public int score;
 	public String name;
 	public int generation;
@@ -34,7 +36,7 @@ public class Craft extends Objects{
 		super.priority = 3;
 		super.type = Space.Types.SHIP;
 		super.color = Color.CYAN;
-		super.radius = 4;
+		super.radius = 7;
 		super.kill_me = false;
 		super.fires = false;
 		left_end_vector = Vu.rotate(dir,fov_angle*2);
@@ -44,6 +46,7 @@ public class Craft extends Objects{
 		generation = 0;
 		score = 0;
 		generateName();
+		fuselage = new Fuselage(color, 10.);
 	}
 	
 	public void accelerate(){
@@ -234,6 +237,12 @@ public class Craft extends Objects{
 		g.setColor(color);
 		g.setStroke(new BasicStroke(9, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g.drawLine((int)pos[0], (int)pos[1],(int)(1*dir[0]+pos[0]) ,(int)(1*dir[1]+pos[1]));
+		
+		g.setStroke(new BasicStroke());
+		g.setColor(Color.YELLOW);
+		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
+		
+		//fuselage.draw(pos, dir, g,this);
 
 		// UNCOMMENT THESE LINES TO SE THE FOV
 //		int fov_length = 1000;
@@ -295,11 +304,12 @@ public class Craft extends Objects{
 			}
 		}
 		this.color = new Color(this.color.getRed(), (this.color.getGreen()/2)+(daddy.color.getGreen()/2), daddy.color.getBlue());
-	
+		System.out.println(this.name +" shagged upp with " + daddy.name);
 		if(Math.random() <= mutation_probability){
 			int s = (int)(Math.random()*decision_list.size());
 			decision_list.put((Fov) decision_list.keySet().toArray()[s], new Decision());
 			this.color = new Color(255-this.color.getRed(),255-this.color.getGreen(),255-this.color.getBlue());
+			
 		}
 	}
 	
@@ -434,5 +444,7 @@ public class Craft extends Objects{
 		}
 		
 	}
+	
+
 
 }

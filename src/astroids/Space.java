@@ -9,13 +9,15 @@ public class Space {
 	double width;
 	double height;
 	public LinkedList<Objects> object_list;
-	long time = System.currentTimeMillis();
-	private long fire_delay = 200;
+	//long time = System.currentTimeMillis();
+	long time = 0; // time in updates
+	private long fire_delay = 5;
 	
 	public Space(double width, double height){
 		this.width = width;
 		this.height = height;
 		object_list = new LinkedList<Objects>();
+		this.time = 0;
 	}
 	
 	public void addObject(Objects obj){
@@ -26,6 +28,7 @@ public class Space {
 		for (Objects obj : object_list) {
 			obj.update(s);
 		}
+		time++;
 		
 		wallBounce();
 		fire();
@@ -55,13 +58,13 @@ public class Space {
 		LinkedList<Objects> tmp = new LinkedList<Objects>();
 		tmp.addAll(object_list);
 		for (Objects obj : object_list) {
-			if(obj.fires == true && obj.getClass() == Craft.class && (System.currentTimeMillis()-obj.time > fire_delay)){
+			if(obj.fires == true && obj.getClass() == Craft.class && (time-obj.time > fire_delay)){
 				
-				Missile m = new Missile(Vu.add(obj.getPos(),Vu.mul(10,obj.getDir())), Vu.mul(Missile.speed,obj.getDir()),(Craft)obj);
+				Missile m = new Missile(Vu.add(obj.getPos(),Vu.mul(20,obj.getDir())), Vu.mul(Missile.speed,obj.getDir()),(Craft)obj);
 				m.color = obj.color;
 				tmp.addFirst(m);
 				obj.fires = false;
-				obj.time = System.currentTimeMillis();
+				obj.time = this.time;
 			}
 		}
 		object_list = tmp;
@@ -117,6 +120,16 @@ public class Space {
 				obj.wallCollide(fail_normal);
 			}
 		}
+	}
+	
+	public int countCrafts(){
+		int count = 0;
+		for (Objects obj : object_list) {
+			if(obj.getClass() == Craft.class && obj != null){
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	

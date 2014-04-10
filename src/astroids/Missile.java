@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 
 public class Missile extends Objects {
 	//boolean fires = true;
-	public static double speed = 7;
+	public static double speed = 20;
 	public Craft sender;
 
 	
@@ -15,7 +15,7 @@ public class Missile extends Objects {
 		this.vel = vel;
 		this.type = Space.Types.MISSILE;
 		this.color = Color.white;
-		super.radius = 1;
+		super.radius = 5;
 		super.priority = 0;
 		this.sender = sender;
 		
@@ -31,10 +31,13 @@ public class Missile extends Objects {
 	public void draw(Graphics2D g) {
 		g.setColor(Color.white);
 		g.setStroke(new BasicStroke(3));
-		g.drawLine((int)pos[0], (int)pos[1], (int)pos[0]+(int)vel[0], (int)pos[1]+(int)vel[1]);
+		g.drawLine((int)pos[0], (int)pos[1], (int)pos[0]+(int)vel[0]/2, (int)pos[1]+(int)vel[1]/2);
 		g.setColor(color);
 		g.setStroke(new BasicStroke(2));
-		g.drawLine((int)pos[0], (int)pos[1], (int)pos[0]+(int)vel[0], (int)pos[1]+(int)vel[1]);
+		g.drawLine((int)pos[0], (int)pos[1], (int)pos[0]+(int)vel[0]/2, (int)pos[1]+(int)vel[1]/2);
+		g.setStroke(new BasicStroke());
+		g.setColor(Color.YELLOW);
+		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
 
 	}
 	
