@@ -265,7 +265,7 @@ public class Craft extends Objects{
 	}
 		
 	private void generateName(){
-		String[] first = {"Millenium","Steel","Iron","Space","Light","Star","Stellar","Lazer","Galactic","Icarus","Orion","Sky"};
+		String[] first = {"Millenium","Steel","Iron","Space","Light","Star","Stellar","Lazer","Galaxy","Icarus","Orion","Sky"};
 		String[] second = {"Falcon", "Eagle", "Hawk","Fighter","Warrior","Lightning","Killer","Wing"};
 		this.name = first[(int)(Math.random()*first.length)] + " "+ second[(int)(Math.random()*second.length)];
 	}

@@ -40,7 +40,7 @@ public class Main extends JFrame {
 		//m.setSize(m.width, m.height);
 		m.setVisible(true);
 		c.setVisible(true);
-		m.createCrafts(30);
+		m.createCrafts(20);
 		
 		Space s = new Space(m.width, m.height);
 		for(int i = 0; i < m.crafts.length;i++){
@@ -118,7 +118,7 @@ public class Main extends JFrame {
 	 * @param contestants
 	 * @return <b>null</b> if battle was inconclusive (no kills or tie)
 	 */
-	public Craft battle(Comp c, Craft[] contestants, int rounds){
+	public void battle(Comp c, Craft[] contestants, int rounds){
 		Space s = new Space(width, height);
 		for (int i = 0; i < rounds; i++) {
 			resetCrafts(contestants);
@@ -150,64 +150,82 @@ public class Main extends JFrame {
 				max = contestants[i].score;
 			}
 		}
-		
-		//if(max == 0){return null;}
-		
-//		for (int i = 0; i < contestants.length; i++) {
-//			if(contestants[i] != best && contestants[i].score == max){
-//				return null;
-//			}
-//		}
-		
-		return best;
 	}
 	
 	
 	public void tournament(Comp c,Craft[] crafts,int rounds, int players){
 		//Lets start of by only doing three tournaments.
 		//Lets just draw the first.
-		Craft[] team = randomPicks(crafts, players);
-		resetCrafts(team);
-		Craft team1_champion = battle(c, team,rounds);
 		
-		team = randomPicks(crafts, players);
-		resetCrafts(team);
-		Craft team2_champion = battle(null, team,rounds);
+		try {
+			assertUnique(crafts);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		resetCrafts(crafts);
 		
+		int[] indexes = randomPermutation(crafts.length, players*3);
+		Craft[] team1 = new Craft[players];
+		Craft[] team2 = new Craft[players];
+		Craft[] team3 = new Craft[players];
+		
+		int ii = 0;
+		for (int i = 0; i < team1.length; i++) {
+			team1[i] = crafts[indexes[ii]];
+			ii++;
+		}
+		
+		//resetCrafts(team1);
+		battle(c, team1,rounds);
+		
+		for (int i = 0; i < team2.length; i++) {
+			team2[i] = crafts[indexes[ii]];
+			ii++;
+		}
+		
+		//resetCrafts(team1);
+		battle(c, team2,rounds);
+		
+		for (int i = 0; i < team3.length; i++) {
+			team3[i] = crafts[indexes[ii]];
+			ii++;
+		}
+		
+		//resetCrafts(team1);
+		battle(c, team3,rounds);
 
-		team = randomPicks(crafts, players);
-		resetCrafts(team);
-		Craft team3_champion = battle(null, team,rounds);
+		
 		
 		Craft daddy = null;
 		Craft mummy = null;
 		Craft sacrifice = null;
 		
-		if(team1_champion.score >= team2_champion.score && team1_champion.score >= team3_champion.score){
-			daddy = team1_champion;
-		}else if(team2_champion.score >= team1_champion.score && team2_champion.score >= team3_champion.score){
-			daddy = team2_champion;
-		}else{
-			daddy = team3_champion;
-		}
-		
-		if(team1_champion.score <= team2_champion.score && team1_champion.score <= team3_champion.score){
-			sacrifice = team1_champion;
-		}else if(team2_champion.score <= team1_champion.score && team2_champion.score <= team3_champion.score){
-			sacrifice = team2_champion;
-		}else{
-			sacrifice = team3_champion;
-		}
-		
-		if(team1_champion.score >= team2_champion.score && team1_champion.score <= team3_champion.score ||
-				team1_champion.score <= team2_champion.score && team1_champion.score >= team3_champion.score){
-			mummy = team1_champion;
-		}else if(team2_champion.score >= team1_champion.score && team2_champion.score <= team3_champion.score||
-				team2_champion.score <= team1_champion.score && team2_champion.score >= team3_champion.score){
-			mummy = team2_champion;
-		}else{
-			mummy = team3_champion;
-		}
+//		if(team1_champion.score >= team2_champion.score && team1_champion.score >= team3_champion.score){
+//			daddy = team1_champion;
+//		}else if(team2_champion.score >= team1_champion.score && team2_champion.score >= team3_champion.score){
+//			daddy = team2_champion;
+//		}else{
+//			daddy = team3_champion;
+//		}
+//		
+//		if(team1_champion.score <= team2_champion.score && team1_champion.score <= team3_champion.score){
+//			sacrifice = team1_champion;
+//		}else if(team2_champion.score <= team1_champion.score && team2_champion.score <= team3_champion.score){
+//			sacrifice = team2_champion;
+//		}else{
+//			sacrifice = team3_champion;
+//		}
+//		
+//		if(team1_champion.score >= team2_champion.score && team1_champion.score <= team3_champion.score ||
+//				team1_champion.score <= team2_champion.score && team1_champion.score >= team3_champion.score){
+//			mummy = team1_champion;
+//		}else if(team2_champion.score >= team1_champion.score && team2_champion.score <= team3_champion.score||
+//				team2_champion.score <= team1_champion.score && team2_champion.score >= team3_champion.score){
+//			mummy = team2_champion;
+//		}else{
+//			mummy = team3_champion;
+//		}
 		
 		System.out.println("Daddy has : " + daddy.score);
 		System.out.println("Mummy has : " + mummy.score);
@@ -248,95 +266,77 @@ public class Main extends JFrame {
 				}
 			}
 			tmp1 = tmp2;
+			for (int ii = 0; ii < r.length; ii++) {
+				if(r[ii] != null){
+				System.out.println(r[ii].hashCode());
+				}else{
+					System.out.println("nöll");
+				}
+			}
+			System.out.println("");
 		}
+		
+		for (int i = 0; i < r.length; i++) {
+			System.out.println(r[i].hashCode());
+		}
+		
+		for (int i = 0; i < r.length; i++) {
+			for (int j = 0; j < r.length; j++) {
+				if(r[i].hashCode()==r[j].hashCode() && i != j){
+					System.out.println(i +" = " + j +"  WHY DOES THIS HAPPEN!!!!!!!!");
+				}
+			}
+		}
+		
 		return r;
 
 	}
+	
+	public static int[] randomPermutation(int size, int picks){
+		if(picks > size){return null;}
+		int[] temp1 = new int[size];
+		int[] temp2;
+		int[] ret = new int[picks];
+		
+		for (int i = 0; i < temp1.length; i++) {
+			temp1[i] = i;
+		}
+		
+		int random = 0;
+		int jj;
+		for (int i = 0; i < ret.length; i++) {
+			random = (int)(Math.random()*temp1.length);
+			ret[i] = temp1[random];
+			temp2 = new int[temp1.length-1];
+			
+			jj = 0;
+			for (int j = 0; j < temp2.length; j++) {
+				if (random != j) {
+					temp2[j] = temp1[jj];
+					jj++;
+				}else{
+					temp2[j] = temp1[jj+1];
+					jj += 2;
+				}
+			}
+			
+			temp1 = temp2;
+		}
+		return ret;
+	}
+	
+	public static void assertUnique(Craft[] crafts) throws Exception{
+		for (int i = 0; i < crafts.length; i++) {
+			for (int j = 0; j < crafts.length; j++) {
+				if (crafts[i] == crafts[j] && i != j) {
+					throw new Exception("Duplicate crap :/");
+				}
+			}
+		}
+	}
 
 }
 
-@SuppressWarnings("serial")
-class Comp extends JComponent{
-	int width;
-	int height;
-	BufferedImage i1;
-	BufferedImage i2;
-	int swap;
-	
-	
-	public Comp(int width, int height) {
-		super();
-		this.width = width;
-		this.height = height;
-		setPreferredSize(new Dimension(width,height));
-		i1 = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		i2 = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = this.i1.createGraphics();
-		g.setColor(Color.black);
-		g.fillRect(0,0, width, height);
-		g = this.i2.createGraphics();
-		g.setColor(Color.black);
-		g.fillRect(0,0, width, height);
-		swap = 0;
-	}
-	
-	public void paintComponent(Graphics g1){
-		super.paintComponent(g1);
-		Graphics2D g = (Graphics2D)g1;
-		//g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-		if(swap == 0){
-			g.drawImage(i2, null, 0, 0);
-		}else {
-			g.drawImage(i1, null, 0, 0);
-		}
-	}
-	
-	public void clearImage(){
-		Graphics2D g;
-		if(swap==0){
-			g = this.i1.createGraphics();
-		}else {
-			g = this.i2.createGraphics();
-		}
-		g.setColor(Color.black);
-		g.fillRect(0,0, width, height);
-	}
-	
-	public void drawTheSpace(Space s){
-		Graphics2D g;
-		if(swap==0){
-			g = this.i1.createGraphics();
-		}else {
-			g = this.i2.createGraphics();
-		}
-		
-		s.drawSpace(g);
-		
-	}
-	
-	public void printFps(long time){
-		Graphics2D g;
-		if(swap==0){
-			g = this.i1.createGraphics();
-		}else {
-			g = this.i2.createGraphics();
-		}
-		g.setColor(Color.green);
-		g.drawString((int)(1./(time*0.001))+"", 0, height-10);
-		
-	}
-	
-	public void flip(){
-		if (swap == 0) {
-			swap =1;
-		}else{
-			swap= 0;
-		}
-	}
-	
-	
-
-}
 
 
 
