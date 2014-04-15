@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 /**
+ * 
  * This class is the craft which will be doing all of the cool things in FooStroid.
  * All of the love making and decision making gets handled here.
  * 
