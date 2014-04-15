@@ -24,6 +24,7 @@ public abstract class Objects {
 	boolean fires = false;
 	final static int craft_score = 1000;
 	final static int asteroid_score = 200;
+	final static int fire_penalty = 2;
 	
 	
 	public void move(){
@@ -57,6 +58,7 @@ public abstract class Objects {
 	 *of the radiuses of the objects.
 	 * 
 	 *You should not kill <b>obj</b>. You should just kill yourself :P
+	 *But everybody should kill missiles.
 	 * @param obj the object that is being collided with.
 	 */
 	public abstract void collide(Objects obj);

@@ -62,9 +62,13 @@ public class Main extends JFrame {
 		
 		c.clearImage();
 		int age = 0;
+		long time = 0;
+		int accumulated_time = 0;
 		while(true){
-			
+			time = System.currentTimeMillis();
 			m.tournament(null, m.crafts, 2, 5);
+			accumulated_time += (System.currentTimeMillis()-time);
+			
 			age++;
 //			if(age % 100 == 0){
 //				writer(generateStats(m.crafts), m.stats_file, m.stats_out);
@@ -74,6 +78,7 @@ public class Main extends JFrame {
 			//We only  draw every tenth tournament.
 			if(age % 10 ==0){
 				m.tournament(c, m.crafts, 2, 10);
+				System.out.println("Tournament average time: "+accumulated_time/age);
 			}
 		}
 		

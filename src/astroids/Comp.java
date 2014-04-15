@@ -48,6 +48,7 @@ class Comp extends JComponent{
 	}
 	
 	public void paintComponent(Graphics g1){
+		//long time = System.currentTimeMillis();
 		super.paintComponent(g1);
 		Graphics2D g = (Graphics2D)g1;
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -56,6 +57,7 @@ class Comp extends JComponent{
 		}else {
 			g.drawImage(i2, null, 0, 0);
 		}
+		//System.out.println("drawtime = " + (System.currentTimeMillis()-time));
 	}
 	
 	public void clearImage(){
@@ -64,7 +66,9 @@ class Comp extends JComponent{
 	}
 	
 	public void drawTheSpace(Space s){
+
 		s.drawSpace(gr);
+		
 	}
 	
 	public void printFps(long time){

@@ -77,6 +77,7 @@ public class Space {
 				tmp.addFirst(m);
 				obj.fires = false;
 				obj.time = this.time;
+				((Craft)obj).score -= Objects.fire_penalty;
 			}
 		}
 		object_list = tmp;
@@ -98,10 +99,12 @@ public class Space {
 	
 	public void collide(){
 		for (Objects source : object_list) {
-			for (Objects target : object_list) {
-				if(source != target){
-				
-				source.collide(target);
+			if(source.getClass() != Missile.class){
+				for (Objects target : object_list) {
+					if(source != target){
+					
+					source.collide(target);
+					}
 				}
 			}
 		}

@@ -114,15 +114,18 @@ public class Craft extends Objects{
 			decision_list.put(fov, new Decision());
 		}else{
 			Decision dec = decision_list.get(fov);
-			if(dec.accelerate){this.accelerate();}
-			if(dec.deccelerate){this.decelerate();}
-			if(dec.turn_left){this.rotateLeft();}
-			if(dec.turn_right){this.rotateRight();}
-			if(dec.fire){this.fires = true;}
+			if(dec.accelerate){accelerate();}
+			if(dec.deccelerate){decelerate();}
+			if(dec.turn_left){rotateLeft();}
+			if(dec.turn_right){rotateRight();}
+			if(dec.fire){fires = true;}
 		}
 		
 	}
 	
+	/**
+	 * This method will kill missiles as well.
+	 */
 	public void collide(Objects obj) {
 		if(Vu.eclidianDistance(this.getPos(), obj.getPos()) <= (this.radius+obj.radius) && this.hashCode() != obj.hashCode()){
 
@@ -130,7 +133,7 @@ public class Craft extends Objects{
 			case MISSILE:
 				if(this.name != ((Missile)obj).sender.name  ){
 					this.kill_me = true;
-					//obj.kill_me = true;
+					obj.kill_me = true;
 					((Missile)obj).sender.score += Objects.craft_score;
 					((Missile)obj).sender.eternal_score += Objects.craft_score;
 				}
@@ -308,22 +311,22 @@ public class Craft extends Objects{
 	 * All though it resets the score and the age.
 	 */
 	public Craft clone(){
-		Craft clone = new Craft(this.pos, this.dir, this.vel);
-		clone.fov = this.fov;
-		clone.decision_list = this.decision_list;
-		clone.color = this.color;
+		Craft clone = new Craft(pos, dir, vel);
+		clone.fov = fov;
+		clone.decision_list = decision_list;
+		clone.color = color;
 		clone.score = 0;
 		clone.eternal_score = 0;
 		clone.age = 1;
-		clone.generation = this.generation;
+		clone.generation = generation;
 		
 		return clone;
 	}
 	
 	/**
 	 * "Mates" this craft with <b>mummy</b>.
-	 * It uses random crossover. The resulting is the blended color of the two crafts.
-	 * 
+	 * It uses random crossover.
+	 * A new color will be generated based on the color of this craft and that of the mummy.
 	 * May mutate the craft as well. In this case one of the entries in the new decision_list
 	 * created by the mating will be changed to a random decision. The color of the craft will also
 	 * be inverted. 
@@ -334,16 +337,16 @@ public class Craft extends Objects{
 		double crossover_factor = 0.4;
 		for (Fov fov : mummy.decision_list.keySet()) {
 			if(Math.random() >= crossover_factor){
-				this.decision_list.put(fov, mummy.decision_list.get(fov));
+				decision_list.put(fov, mummy.decision_list.get(fov));
 			}
 		}
-		this.color = new Color(this.color.getRed(), (this.color.getGreen()/2)+(mummy.color.getGreen()/2), mummy.color.getBlue());
+		color = new Color(color.getRed(), (color.getGreen()/2)+(mummy.color.getGreen()/2), mummy.color.getBlue());
 
 		
 		if(Math.random() <= mutation_probability){
 			int s = (int)(Math.random()*decision_list.size());
 			decision_list.put((Fov) decision_list.keySet().toArray()[s], new Decision());
-			this.color = new Color(255-this.color.getRed(),255-this.color.getGreen(),255-this.color.getBlue());
+			color = new Color(255-color.getRed(),255-color.getGreen(),255-color.getBlue());
 			
 		}
 	}

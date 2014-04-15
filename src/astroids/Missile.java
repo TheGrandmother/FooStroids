@@ -3,11 +3,23 @@ package astroids;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-
+/**
+ * This is the missile class.
+ * Missiles are silly. They Should never do collision checks.
+ * This is since there will most likely be far more missiles 
+ * than other objects we don't want to have to test 
+ * for each of the missiles
+ * 
+ * 
+ * @author TheGrandmother
+ *
+ */
 public class Missile extends Objects {
 	//boolean fires = true;
 	public static double speed = 20;
 	public Craft sender;
+	final public int life_span =  20;
+	int age;
 
 	
 	public Missile(double[] pos, double[] vel, Craft sender){
@@ -18,12 +30,18 @@ public class Missile extends Objects {
 		super.radius = 5;
 		super.priority = 0;
 		this.sender = sender;
+		this.age = 0;
 		
 	}
 	
 	@Override
 	public void update(Space s) {
 		move();
+		if (age >= life_span) {
+			kill_me = true;
+		}else {
+			age++;
+		}
 
 	}
 
@@ -41,7 +59,10 @@ public class Missile extends Objects {
 
 	}
 	
-	@Override
+	/**
+	 * This should not be used!!!!!!
+	 * Kill all missiles in the other methods instead.
+	 */
 	public void collide(Objects obj) {
 		if(Vu.eclidianDistance(this.getPos(), obj.getPos()) <= (this.radius+obj.radius) && this.hashCode() != obj.hashCode()){
 			switch (obj.type) {
