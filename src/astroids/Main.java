@@ -7,65 +7,91 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.text.MaskFormatter;
 
-
+/**
+ * This is the Main class for the FooStroids thingamagoop.
+ * It is as of now fairly basic.
+ * 
+ * @author The Grandmother
+ */
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
-	int lol = 0;
-	BufferedImage background;
-	BufferedImage foreground;
+
 	Craft[] crafts;
-	int warmup_time = 5;
-	long battle_length = 1000;
-	long refresh_rate = 40;
-	
+	Asteroid[] asteroids;
+	final int warmup_rounds = 5;
+	final int warmup_length = 400;
+	final long battle_length = 350;	//How many steps a battle will last
+	final long refresh_rate = 40;
+	File stats_file = new File("stats.txt");
+	BufferedWriter stats_out = null;
+	File color_file = new File("color.txt");
+	BufferedWriter color_out = null;
 	
 	int height;
 	int width ;
+	int number_of_crafts;
+	int number_of_asteroids;
 	
 	public static void main(String[] args){
-		Main m = new Main(1000,1000);
+
+		Main m = new Main(1000,1000,50,0);
 		Comp c = new Comp(m.width, m.height);
-		m.add(c);
+		//m.createFiles();
 		
+		m.add(c);
 		m.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		m.pack();
-		 
-		//c.setSize(m.width, m.height);
-		//m.setSize(m.width, m.height);
 		m.setVisible(true);
 		c.setVisible(true);
-		m.createCrafts(20);
 		
-		Space s = new Space(m.width, m.height);
-		for(int i = 0; i < m.crafts.length;i++){
-			s.addObject(m.crafts[i]);
-		}
+		
+		m.createCrafts(m.number_of_crafts);
+		m.createAsteroids(m.number_of_asteroids);
 		m.warmUp();
 		
 		c.clearImage();
-		while(true && s.countCrafts() > 1){
-			m.tournament(c, m.crafts, 2, 5);
+		int age = 0;
+		while(true){
+			
+			m.tournament(null, m.crafts, 2, 5);
+			age++;
+//			if(age % 100 == 0){
+//				writer(generateStats(m.crafts), m.stats_file, m.stats_out);
+//				writer(generateColorStats(m.crafts), m.color_file, m.color_out);
+//			}
+			
+			//We only  draw every tenth tournament.
+			if(age % 10 ==0){
+				m.tournament(c, m.crafts, 2, 10);
+			}
 		}
 		
 	}
 	
-	public Main(int width,int height) {
+	public Main(int width,int height,int crafts, int asteroids) {
 		super();
 		this.height = height;
 		this.width = width;
+		this.number_of_asteroids = asteroids;
+		this.number_of_crafts = crafts;
 		setUndecorated(true);
 		setResizable(false);
 		setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	public void createCrafts(int n){
+	private void createCrafts(int n){
 		crafts = new Craft[n];
 		for (int i = 0; i < n; i++) {
 			crafts[i] = new Craft(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1), Vu.random(0, 0, 0, 0));
@@ -75,7 +101,21 @@ public class Main extends JFrame {
 		}
 	}
 	
-	public void resetCrafts(Craft[] crafts){
+	private void createAsteroids(int n){
+		asteroids = new Asteroid[n];
+		for (int i = 0; i < asteroids.length; i++) {
+			asteroids[i] = new Asteroid(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1));
+		}
+	}
+	
+	private void resetAsteorids(){
+		for (int i = 0; i < asteroids.length; i++) {
+			asteroids[i] = new Asteroid(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1));
+		}
+	}
+	
+	
+	private void resetCrafts(Craft[] crafts){
 		for(int i = 0; i < crafts.length; i++){
 			//crafts[i] =new Craft(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1), Vu.random(0, 0, 0, 0));
 			crafts[i].kill_me=false;
@@ -85,44 +125,62 @@ public class Main extends JFrame {
 		}
 	}
 	
-	public void resetScores(Craft[] crafts){
-		for(int i = 0; i < crafts.length; i++){
-			//crafts[i] =new Craft(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1), Vu.random(0, 0, 0, 0));
-			crafts[i].score=0;
+	private void resetScores(Craft[] crafts){
+		for (int i = 0; i < crafts.length; i++) {
+			crafts[i].score = 0;
 		}
 	}
 	
-	public void warmUp(){
+	/**
+	 * Plays a couple of rounds just to populate the crafts descion lists
+	 */
+	private void warmUp(){
 		
-		for (int i = 0; i < warmup_time; i++) {
+		for (int i = 0; i < warmup_rounds; i++) {
 			Space s  = new Space(width, height);
-			populateSpace(s,this.crafts);
+			populateSpace(s,crafts);
+			populateSpace(s, asteroids);
 			while(s.time < 1000 && s.countCrafts() > 1){
 				s.update(s);
 			}
 			resetCrafts(this.crafts);
+			resetAsteorids();
 			
 		}
+		resetCrafts(crafts);
 		resetScores(crafts);
+		for (int i = 0; i < crafts.length; i++) {
+			crafts[i].eternal_score = 0;
+		}
 		
 	}
 	
-	public void populateSpace(Space s,Craft[] crafts){
+	private void populateSpace(Space s,Objects[] crafts){
 		for(int i = 0; i < crafts.length;i++){
 			s.addObject(crafts[i]);
 		}
 	}
 
 	/**
-	 * @param c
+	 * This is the method in which the action happens.
+	 * When this method is called a battle more epic than 
+	 * anything the world has ever seen will take place.
+	 * 
+	 * @param c this is the <b>Comp</b> class upon which the battle is to be drawn. 
+	 * If <b>c</b> = <b>null</b> then the battle will not be displayed.
 	 * @param contestants
-	 * @return <b>null</b> if battle was inconclusive (no kills or tie)
+	 * @param rounds how many rounds of battle will take place.
 	 */
-	public void battle(Comp c, Craft[] contestants, int rounds){
-		Space s = new Space(width, height);
+	private void battle(Comp c, Craft[] contestants, int rounds){
+		
+		
 		for (int i = 0; i < rounds; i++) {
 			resetCrafts(contestants);
+			resetAsteorids();
+			
+			Space s = new Space(width, height);
 			populateSpace(s, contestants);
+			populateSpace(s, asteroids);
 			long time = 0;
 			while(s.time < battle_length && s.countCrafts() > 1){
 				
@@ -135,28 +193,33 @@ public class Main extends JFrame {
 				
 				if(c != null){
 					while(System.currentTimeMillis()-time < refresh_rate){}
+					c.drawText();
 					c.drawTheSpace(s);
+					
 					c.printFps(System.currentTimeMillis()-time);
 					c.repaint();
 				}
 			}
 		}
-		
-		int max = Integer.MIN_VALUE;
-		Craft best = null;
-		for (int i = 0; i < contestants.length; i++) {
-			if(contestants[i].score >= max){
-				best = contestants[i];
-				max = contestants[i].score;
-			}
-		}
+
 	}
 	
-	
-	public void tournament(Comp c,Craft[] crafts,int rounds, int players){
-		//Lets start of by only doing three tournaments.
-		//Lets just draw the first.
-		
+	/**
+	 * When this method is called a great tournament will be started.
+	 * Actually the tournament is not that great since there will only be one round
+	 * played. Three battlers will take place and in each a number of crafts will be
+	 * sent in such a way that no craft partakes in more than one battle.
+	 * <p>
+	 * After the fog of war has cleared and the battles are over the two best crafts 
+	 * will be selected and they will have awkward sex and make a baby. The crappiest 
+	 * craft in the tournament will be sacrificed and the baby will take its place.
+	 * @param c
+	 * @param crafts
+	 * @param rounds
+	 * @param players
+	 */
+	private void tournament(Comp c,Craft[] crafts,int rounds, int players){
+
 		try {
 			assertUnique(crafts);
 		} catch (Exception e) {
@@ -164,6 +227,7 @@ public class Main extends JFrame {
 			e.printStackTrace();
 		}
 		resetCrafts(crafts);
+		resetScores(crafts);
 		
 		int[] indexes = randomPermutation(crafts.length, players*3);
 		Craft[] team1 = new Craft[players];
@@ -175,124 +239,69 @@ public class Main extends JFrame {
 			team1[i] = crafts[indexes[ii]];
 			ii++;
 		}
-		
-		//resetCrafts(team1);
 		battle(c, team1,rounds);
-		
+
 		for (int i = 0; i < team2.length; i++) {
 			team2[i] = crafts[indexes[ii]];
 			ii++;
 		}
-		
-		//resetCrafts(team1);
-		battle(c, team2,rounds);
+		battle(null, team2,rounds);
 		
 		for (int i = 0; i < team3.length; i++) {
 			team3[i] = crafts[indexes[ii]];
 			ii++;
 		}
-		
-		//resetCrafts(team1);
-		battle(c, team3,rounds);
+		battle(null, team3,rounds);
 
-		
-		
 		Craft daddy = null;
+		int max_score = Integer.MIN_VALUE;
+		for (int i = 0; i < crafts.length; i++) {
+			if(crafts[i].score >= max_score){
+				daddy = crafts[i];
+				max_score = crafts[i].score;
+			}
+		}
+		
 		Craft mummy = null;
+		int second_score = Integer.MIN_VALUE;
+		for (int i = 0; i < crafts.length; i++) {
+			if(crafts[i].score >= second_score && crafts[i].score < max_score){
+				mummy = crafts[i];
+				second_score = crafts[i].score;
+			}
+		}
+		
 		Craft sacrifice = null;
+		int min_score = Integer.MAX_VALUE;
+		int sacrifice_index =0;
+		int min_fitness = Integer.MAX_VALUE;
+		for (int i = 0; i < crafts.length; i++) {
+			if(crafts[i].score <= min_score && crafts[i].score < max_score && crafts[i].score < second_score && crafts[i].getFitness() <=min_fitness ){
+				sacrifice = crafts[i];
+				min_score = crafts[i].score;
+				sacrifice_index = i;
+				min_fitness = crafts[i].getFitness();
+			}
+		}
 		
-//		if(team1_champion.score >= team2_champion.score && team1_champion.score >= team3_champion.score){
-//			daddy = team1_champion;
-//		}else if(team2_champion.score >= team1_champion.score && team2_champion.score >= team3_champion.score){
-//			daddy = team2_champion;
-//		}else{
-//			daddy = team3_champion;
-//		}
-//		
-//		if(team1_champion.score <= team2_champion.score && team1_champion.score <= team3_champion.score){
-//			sacrifice = team1_champion;
-//		}else if(team2_champion.score <= team1_champion.score && team2_champion.score <= team3_champion.score){
-//			sacrifice = team2_champion;
-//		}else{
-//			sacrifice = team3_champion;
-//		}
-//		
-//		if(team1_champion.score >= team2_champion.score && team1_champion.score <= team3_champion.score ||
-//				team1_champion.score <= team2_champion.score && team1_champion.score >= team3_champion.score){
-//			mummy = team1_champion;
-//		}else if(team2_champion.score >= team1_champion.score && team2_champion.score <= team3_champion.score||
-//				team2_champion.score <= team1_champion.score && team2_champion.score >= team3_champion.score){
-//			mummy = team2_champion;
-//		}else{
-//			mummy = team3_champion;
-//		}
+		if(sacrifice == null || daddy == null || sacrifice ==null){
+			System.out.println("It was a tie :(");
+		}else{
+			//System.out.println("Daddy has : " + daddy.score);
+			//System.out.println("Mummy has : " + mummy.score);
+			//System.out.println("Sacrifice has : " + sacrifice.score);
+			
+			crafts[sacrifice_index] = daddy.clone();
+			crafts[sacrifice_index].mate(mummy);
+			crafts[sacrifice_index].generation++;
+		}
 		
-		System.out.println("Daddy has : " + daddy.score);
-		System.out.println("Mummy has : " + mummy.score);
-		System.out.println("Sacrifice has : " + sacrifice.score);
-		
-		sacrifice = daddy.clone();
-		sacrifice.mate(mummy);
-		sacrifice.generation++;
-		
-		resetScores(crafts);
-
+		for (int i = 0; i < crafts.length; i++) {
+			crafts[i].age++;
+		}
 	}
 	
-	/**
-	 * Returns a array of unique individuals from a list of crafts
-	 * 
-	 * @return Returns {@code null} if picks < length of crafts.
-	 */
-	public Craft[] randomPicks(Craft[] crafts, int picks){
-		Craft[] tmp1 = crafts;
-		Craft[] tmp2 = null;
-		Craft[] r = new Craft[picks];
-		int rnd = 0;
-		int jj = 0;
-		for (int i = 0; i < picks; i++) {
-			rnd = (int)(Math.random()*tmp1.length);
-			r[i] = tmp1[rnd];
-
-			tmp2 = new Craft[tmp1.length-1];
-			jj = 0;
-			for (int j = 0; j < tmp2.length; j++) {
-				if(jj != rnd){
-					tmp2[j] = tmp1[jj];
-					jj++;
-				}else{
-					tmp2[j] = tmp1[jj+1];
-					jj += 2;
-				}
-			}
-			tmp1 = tmp2;
-			for (int ii = 0; ii < r.length; ii++) {
-				if(r[ii] != null){
-				System.out.println(r[ii].hashCode());
-				}else{
-					System.out.println("nöll");
-				}
-			}
-			System.out.println("");
-		}
-		
-		for (int i = 0; i < r.length; i++) {
-			System.out.println(r[i].hashCode());
-		}
-		
-		for (int i = 0; i < r.length; i++) {
-			for (int j = 0; j < r.length; j++) {
-				if(r[i].hashCode()==r[j].hashCode() && i != j){
-					System.out.println(i +" = " + j +"  WHY DOES THIS HAPPEN!!!!!!!!");
-				}
-			}
-		}
-		
-		return r;
-
-	}
-	
-	public static int[] randomPermutation(int size, int picks){
+	private static int[] randomPermutation(int size, int picks){
 		if(picks > size){return null;}
 		int[] temp1 = new int[size];
 		int[] temp2;
@@ -325,7 +334,7 @@ public class Main extends JFrame {
 		return ret;
 	}
 	
-	public static void assertUnique(Craft[] crafts) throws Exception{
+	private static void assertUnique(Craft[] crafts) throws Exception{
 		for (int i = 0; i < crafts.length; i++) {
 			for (int j = 0; j < crafts.length; j++) {
 				if (crafts[i] == crafts[j] && i != j) {
@@ -335,6 +344,70 @@ public class Main extends JFrame {
 		}
 	}
 
+	private void createFiles(){
+		try {
+			if(stats_file.exists()){
+				stats_file.delete();
+				stats_file.createNewFile();
+				stats_out = new BufferedWriter(new FileWriter(stats_file,true));
+			}else{
+				stats_file.createNewFile();
+				stats_out = new BufferedWriter(new FileWriter(stats_file,true));
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+
+		try {
+			if(color_file.exists()){
+				color_file.delete();
+				color_file.createNewFile();
+				color_out = new BufferedWriter(new FileWriter(color_file,true));
+			}else{
+				color_file.createNewFile();
+				color_out = new BufferedWriter(new FileWriter(color_file,true));
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void writer(String message,File file,BufferedWriter out){
+	    try {
+	        if (out == null) {
+	            FileWriter datawriter = new FileWriter(file,true);
+	            out = new BufferedWriter(datawriter);
+	        }
+	        if (file.exists()) {
+	            out.append(message);
+	            out.flush();
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	private static String generateStats(Craft[] crafts){
+		String s = "{";
+		for (int i = 0; i < crafts.length-1; i++) {
+			s += crafts[i].getFitness()+",";
+		}
+		s += crafts[crafts.length-1].getFitness()+"},";
+		return s;
+	}
+	
+	private static String generateColorStats(Craft[] crafts){
+		String s = "{";
+		for (int i = 0; i < crafts.length-1; i++) {
+			s += "{"+crafts[i].color.getRed()+","+crafts[i].color.getGreen() +","+ crafts[i].color.getBlue()+"},";
+		}
+		s += "{"+crafts[crafts.length-1].color.getRed()+","+crafts[crafts.length-1].color.getGreen() +","+ crafts[crafts.length-1].color.getBlue()+"}}";
+		return s;
+	}
+	
 }
 
 

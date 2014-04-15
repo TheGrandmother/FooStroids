@@ -2,7 +2,12 @@ package astroids;
 
 import java.awt.Graphics2D;
 import java.util.LinkedList;
-
+/**
+ * 
+ * The space is the environment in which everything happens.
+ * 
+ * @author The Grandmother
+ */
 
 public class Space {
 	enum Types {SHIP,ASTEROID,MISSILE,OTHER};
@@ -24,6 +29,12 @@ public class Space {
 		object_list.add(obj);
 	}
 	
+	/**
+	 * This method updates the space. I.e it plays the game for one step. 
+	 * Every time this method is called all of the objects in the space will be updated according to their own 
+	 * update method. We will also check for wall collisions, weather or nor things are firing, colliding or dying. 
+	 * @param s
+	 */
 	public void update(Space s){
 		for (Objects obj : object_list) {
 			obj.update(s);
@@ -32,7 +43,7 @@ public class Space {
 		
 		wallBounce();
 		fire();
-		bounce();
+		collide();
 		kill();
 	}
 	
@@ -41,7 +52,7 @@ public class Space {
 		for (Objects obj : object_list) {
 			if (obj.getClass() == Craft.class) {
 				g.setColor(obj.color);
-				g.drawString(((Craft)obj).name+" : "+ ((Craft)obj).score + " : " + ((Craft)obj).generation  , 5, score_pos);
+				g.drawString(((Craft)obj).name+" : "+ ((Craft)obj).score + " : " + ((Craft)obj).age + " : "+ ((Craft)obj).getFitness()   , 5, score_pos);
 				score_pos += 12;
 			}
 			obj.draw(g);
@@ -54,6 +65,7 @@ public class Space {
 		}
 	}
 	
+
 	public void fire(){
 		LinkedList<Objects> tmp = new LinkedList<Objects>();
 		tmp.addAll(object_list);
@@ -70,7 +82,6 @@ public class Space {
 		object_list = tmp;
 	}
 	
-
 	public void kill(){
 		LinkedList<Objects> tmp = new LinkedList<Objects>();
 		int index = 0;
@@ -85,7 +96,7 @@ public class Space {
 		object_list = tmp;
 	}
 	
-	public void bounce(){
+	public void collide(){
 		for (Objects source : object_list) {
 			for (Objects target : object_list) {
 				if(source != target){

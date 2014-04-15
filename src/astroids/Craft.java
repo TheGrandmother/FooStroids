@@ -3,30 +3,38 @@ package astroids;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
-
+/**
+ * This class is the craft which will be doing all of the cool things in FooStroid.
+ * All of the love making and decision making gets handled here.
+ * 
+ * @author The_Grandmother
+ */
 public class Craft extends Objects{
 
-	Fov fov;
-	public enum Action{ROTATE_RIGHT,ROTATE_LEFT,ACCELERATE,FIRE,NOTHING}
-	private double thrust_power = .5; 
-	private double rotation_constant = Math.PI/30;
-	private double fov_angle = Math.PI/12;
-	private double max_speed = 7;
+	
+	//public enum Action{ROTATE_RIGHT,ROTATE_LEFT,ACCELERATE,FIRE,NOTHING}
+	final double thrust_power = .7; 
+	final double rotation_constant = Math.PI/30;
+	final double fov_angle = Math.PI/12;
+	final double max_speed = 7;
+	final double mutation_probability = 0.05;
 	
 	private double[] left_end_vector;
 	private double[] left_vector;
 	private double[] right_end_vector;
 	private double[] right_vector;
-	private double mutation_probability = 0.1;
-	private Fuselage fuselage;
+
+	
 	public int score;
 	public String name;
 	public int generation;
+	public int age;
+	public int eternal_score;
 	
+	Fov fov;
 	HashMap<Fov, Decision> decision_list = new HashMap<Fov, Decision>(200);
 
 	public Craft(double[] pos, double[] dir, double[] vel){
@@ -46,7 +54,8 @@ public class Craft extends Objects{
 		generation = 0;
 		score = 0;
 		generateName();
-		fuselage = new Fuselage(color, 10.);
+		age = 1;
+		eternal_score = 0;
 	}
 	
 	public void accelerate(){
@@ -95,11 +104,11 @@ public class Craft extends Objects{
 			vel[1] = max_speed;
 		}
 		populateFov(s);
-		make_decision(fov);
-		//System.out.println(fires);
+		makeDecision(fov);
+		
 	}
 	
-	private void make_decision(Fov fov){
+	private void makeDecision(Fov fov){
 		if(!decision_list.containsKey(fov)){
 			decision_list.put(fov, new Decision());
 		}else{
@@ -115,28 +124,27 @@ public class Craft extends Objects{
 	
 	public void collide(Objects obj) {
 		if(Vu.eclidianDistance(this.getPos(), obj.getPos()) <= (this.radius+obj.radius) && this.hashCode() != obj.hashCode()){
-			
-			//System.out.println(this.getClass().getCanonicalName() +" Collided with "+ obj.getClass().getCanonicalName());
+
 			switch (obj.type) {
 			case MISSILE:
-				
 				if(this.name != ((Missile)obj).sender.name  ){
 					this.kill_me = true;
 					//obj.kill_me = true;
 					((Missile)obj).sender.score += Objects.craft_score;
+					((Missile)obj).sender.eternal_score += Objects.craft_score;
 				}
 				break;
 			
 			case ASTEROID:
-				
 				this.kill_me = true;
 				break;
+			
 				
+			/*
+			 * COLISSION IS DISABLED!
+			 */
 			case SHIP:
-				
-				this.kill_me = true;
-				//obj.kill_me = true;
-				
+				//this.kill_me = true;
 				break;
 				
 			default:
@@ -149,6 +157,9 @@ public class Craft extends Objects{
 		bounce(normal);
 	}
 	
+	/**
+	 * Populates the field of view. Only adds objects with a priority({@link Objects.priority}) higher than 1. Only adds the closest object.
+	 */
 	private void populateFov(Space s){
 		fov = new Fov();
 		left_end_vector = Vu.normalize(Vu.rotate(dir,fov_angle*2));
@@ -204,7 +215,12 @@ public class Craft extends Objects{
 		}
 	}
 	
-	boolean toTheRight(double[] p, double[] v){
+	/**
+	 * Checks if the point <b>p</b> is to the right of vector <b>v</b>
+	 * @param p
+	 * @param v
+	 */
+	private boolean toTheRight(double[] p, double[] v){
 		double[] v1 = new double[3];
 		v1[0] = v[0];
 		v1[1] = v[1];
@@ -238,9 +254,9 @@ public class Craft extends Objects{
 		g.setStroke(new BasicStroke(9, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g.drawLine((int)pos[0], (int)pos[1],(int)(1*dir[0]+pos[0]) ,(int)(1*dir[1]+pos[1]));
 		
-		g.setStroke(new BasicStroke());
-		g.setColor(Color.YELLOW);
-		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
+//		g.setStroke(new BasicStroke());
+//		g.setColor(Color.YELLOW);
+//		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
 		
 		//fuselage.draw(pos, dir, g,this);
 
@@ -261,7 +277,7 @@ public class Craft extends Objects{
 //		g.setColor(new Color(255, 255, 0, 100));
 //		g.setStroke(new BasicStroke(1));
 //		g.drawLine((int)pos[0], (int)pos[1],(int)(fov_length*left_vector[0]+pos[0]) ,(int)(fov_length*left_vector[1]+pos[1]));
-		
+//		
 	}
 		
 	private void generateName(){
@@ -271,10 +287,9 @@ public class Craft extends Objects{
 	}
 	
 	void print(){
-		fov.print();
-		System.out.println(this.toString()+"");
-		System.out.println("Pos: ("+pos[0]+","+pos[1]+")  " + "Vel: ("+vel[0]+","+vel[1]+")");
-		System.out.println("Dir: ("+dir[0]+","+dir[1]+")");
+		//fov.print();
+		System.out.println(name + ". score:"+ score+" generation:"+generation);
+
 
 	}
 
@@ -287,30 +302,53 @@ public class Craft extends Objects{
 		
 	}
 	
+	/**
+	 * "Clones" a craft. Creates a new craft with the same descion_list
+	 * All though it resets the score and the age.
+	 */
 	public Craft clone(){
 		Craft clone = new Craft(this.pos, this.dir, this.vel);
 		clone.fov = this.fov;
 		clone.decision_list = this.decision_list;
 		clone.color = this.color;
 		clone.score = 0;
+		clone.eternal_score = 0;
+		clone.age = 1;
+		clone.generation = this.generation;
 		
 		return clone;
 	}
 	
-	public void mate(Craft daddy){
-		for (Fov fov : daddy.decision_list.keySet()) {
-			if(Math.random() >= 0.5){
-				this.decision_list.put(fov, daddy.decision_list.get(fov));
+	/**
+	 * "Mates" this craft with <b>mummy</b>.
+	 * It uses random crossover. The resulting is the blended color of the two crafts.
+	 * 
+	 * May mutate the craft as well. In this case one of the entries in the new decision_list
+	 * created by the mating will be changed to a random decision. The color of the craft will also
+	 * be inverted. 
+	 * 
+	 * @param mummy
+	 */
+	public void mate(Craft mummy){
+		double crossover_factor = 0.4;
+		for (Fov fov : mummy.decision_list.keySet()) {
+			if(Math.random() >= crossover_factor){
+				this.decision_list.put(fov, mummy.decision_list.get(fov));
 			}
 		}
-		this.color = new Color(this.color.getRed(), (this.color.getGreen()/2)+(daddy.color.getGreen()/2), daddy.color.getBlue());
-		System.out.println(this.name +" shagged upp with " + daddy.name);
+		this.color = new Color(this.color.getRed(), (this.color.getGreen()/2)+(mummy.color.getGreen()/2), mummy.color.getBlue());
+
+		
 		if(Math.random() <= mutation_probability){
 			int s = (int)(Math.random()*decision_list.size());
 			decision_list.put((Fov) decision_list.keySet().toArray()[s], new Decision());
 			this.color = new Color(255-this.color.getRed(),255-this.color.getGreen(),255-this.color.getBlue());
 			
 		}
+	}
+	
+	public int getFitness(){
+		return (eternal_score/age);
 	}
 	
 	public class Fov{
@@ -337,16 +375,16 @@ public class Craft extends Objects{
 			heading[2] = getHeading(source.getDir(), target.getVel());
 			type[2] = target.type;
 		}
-		
-		private int getHeading(double[] source, double[] target){
+
+		private int getHeading(double[] source_direction, double[] target_heading){
 			double[] s1 = new double[3];
-			s1[0] = source[0];
-			s1[1] = source[1];
+			s1[0] = source_direction[0];
+			s1[1] = source_direction[1];
 			s1[2] = 0;
 			
 			double[] t1 = new double[3];
-			t1[0] = target[0];
-			t1[1] = target[1];
+			t1[0] = target_heading[0];
+			t1[1] = target_heading[1];
 			t1[2] = 0;
 			
 			double res = Vu.crossProduct(t1, s1)[2];
@@ -444,7 +482,6 @@ public class Craft extends Objects{
 		}
 		
 	}
-	
 
 
 }

@@ -35,9 +35,9 @@ public class Missile extends Objects {
 		g.setColor(color);
 		g.setStroke(new BasicStroke(2));
 		g.drawLine((int)pos[0], (int)pos[1], (int)pos[0]+(int)vel[0]/2, (int)pos[1]+(int)vel[1]/2);
-		g.setStroke(new BasicStroke());
-		g.setColor(Color.YELLOW);
-		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
+//		g.setStroke(new BasicStroke());
+//		g.setColor(Color.YELLOW);
+//		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
 
 	}
 	

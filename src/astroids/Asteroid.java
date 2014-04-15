@@ -32,6 +32,7 @@ public class Asteroid extends Objects {
 				this.kill_me = true;
 				//obj.kill_me = true;
 				((Missile)obj).sender.score += Objects.asteroid_score;
+				((Missile)obj).sender.eternal_score += Objects.asteroid_score;
 				break;
 			
 			case ASTEROID:
