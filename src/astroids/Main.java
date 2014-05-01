@@ -45,7 +45,7 @@ public class Main extends JFrame {
 	
 	public static void main(String[] args){
 
-		Main m = new Main(1000,1000,50,0);
+		Main m = new Main(1000,1000,75,0);
 		Comp c = new Comp(m.width, m.height);
 		//m.createFiles();
 		
@@ -66,7 +66,7 @@ public class Main extends JFrame {
 		int accumulated_time = 0;
 		while(true){
 			time = System.currentTimeMillis();
-			m.tournament(null, m.crafts, 2, 5);
+			m.tournament(null, m.crafts, 3, 5);
 			accumulated_time += (System.currentTimeMillis()-time);
 			
 			age++;
@@ -76,8 +76,8 @@ public class Main extends JFrame {
 //			}
 			
 			//We only  draw every tenth tournament.
-			if(age % 10 ==0){
-				m.tournament(c, m.crafts, 2, 10);
+			if(age % 100 ==0){
+				m.tournament(c, m.crafts, 2, 5);
 				System.out.println("Tournament average time: "+accumulated_time/age);
 			}
 		}
@@ -109,13 +109,13 @@ public class Main extends JFrame {
 	private void createAsteroids(int n){
 		asteroids = new Asteroid[n];
 		for (int i = 0; i < asteroids.length; i++) {
-			asteroids[i] = new Asteroid(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1));
+			asteroids[i] = new Asteroid(Vu.random(0, width, 0, height), Vu.random(-6, 6, -6, 6));
 		}
 	}
 	
 	private void resetAsteorids(){
 		for (int i = 0; i < asteroids.length; i++) {
-			asteroids[i] = new Asteroid(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1));
+			asteroids[i] = new Asteroid(Vu.random(0, width, 0, height), Vu.random(-6, 6, -6,6));
 		}
 	}
 	

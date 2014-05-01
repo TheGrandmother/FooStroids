@@ -57,6 +57,7 @@ class Comp extends JComponent{
 		}else {
 			g.drawImage(i2, null, 0, 0);
 		}
+		g.dispose();
 		//System.out.println("drawtime = " + (System.currentTimeMillis()-time));
 	}
 	
@@ -105,9 +106,14 @@ class Comp extends JComponent{
 	public void flip(){
 		if (swap == 0) {
 			swap =1;
+			
+			gr.dispose();
+			System.gc();
 			gr = this.i1.createGraphics();
 		}else{
 			swap= 0;
+			gr.dispose();
+			System.gc();
 			gr = this.i2.createGraphics();
 		}
 	}

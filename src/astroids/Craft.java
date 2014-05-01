@@ -20,8 +20,9 @@ public class Craft extends Objects{
 	final double thrust_power = .7; 
 	final double rotation_constant = Math.PI/30;
 	final double fov_angle = Math.PI/12;
-	final double max_speed = 7;
+	final double max_speed = 6;
 	final double mutation_probability = 0.05;
+	final double crossover_factor = 0.4;
 	
 	private double[] left_end_vector;
 	private double[] left_vector;
@@ -334,7 +335,7 @@ public class Craft extends Objects{
 	 * @param mummy
 	 */
 	public void mate(Craft mummy){
-		double crossover_factor = 0.4;
+		
 		for (Fov fov : mummy.decision_list.keySet()) {
 			if(Math.random() >= crossover_factor){
 				decision_list.put(fov, mummy.decision_list.get(fov));
