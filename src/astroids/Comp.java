@@ -108,12 +108,12 @@ class Comp extends JComponent{
 			swap =1;
 			
 			gr.dispose();
-			System.gc();
+			//System.gc();
 			gr = this.i1.createGraphics();
 		}else{
 			swap= 0;
 			gr.dispose();
-			System.gc();
+			//System.gc();
 			gr = this.i2.createGraphics();
 		}
 	}
