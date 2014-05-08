@@ -129,7 +129,7 @@ public class Space {
 				obj.pos[1] = obj.radius;
 			}else if((obj.getPos()[1]+obj.radius >= height)){
 				obj.wallCollide(lower_normal);
-				obj.pos[1] = width - obj.radius;
+				obj.pos[1] = height - obj.radius;
 			}else if((obj.getPos()[1]+obj.radius == height) || (obj.getPos()[1]+obj.radius == width)){
 				obj.wallCollide(fail_normal);
 			}
