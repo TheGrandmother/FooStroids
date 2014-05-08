@@ -81,7 +81,7 @@ public class Main extends JFrame {
 //			}
 			
 			//We only  draw every tenth tournament.
-			if(age % 100 ==0 && m.draw_all){
+			if(age % 100 ==0 && !m.draw_all){
 				m.tournament(c, m.crafts, 2, 5);
 				System.out.println("Tournament average time: "+accumulated_time/age);
 			}
