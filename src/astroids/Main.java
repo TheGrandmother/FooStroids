@@ -37,6 +37,7 @@ public class Main extends JFrame {
 	BufferedWriter stats_out = null;
 	File color_file = new File("color.txt");
 	BufferedWriter color_out = null;
+	boolean draw_all = true;
 	
 	int height;
 	int width ;
@@ -66,7 +67,11 @@ public class Main extends JFrame {
 		int accumulated_time = 0;
 		while(true){
 			time = System.currentTimeMillis();
-			m.tournament(null, m.crafts, 3, 5);
+			if(m.draw_all){
+				m.tournament(c, m.crafts, 3, 5);
+			}else{
+				m.tournament(null, m.crafts, 3, 5);
+			}
 			accumulated_time += (System.currentTimeMillis()-time);
 			
 			age++;
@@ -76,7 +81,7 @@ public class Main extends JFrame {
 //			}
 			
 			//We only  draw every tenth tournament.
-			if(age % 100 ==0){
+			if(age % 100 ==0 && m.draw_all){
 				m.tournament(c, m.crafts, 2, 5);
 				System.out.println("Tournament average time: "+accumulated_time/age);
 			}
