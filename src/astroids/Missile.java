@@ -18,7 +18,7 @@ public class Missile extends Objects {
 	//boolean fires = true;
 	public static double speed = 20;
 	public Craft sender;
-	final public int life_span =  20;
+	final static public int life_span =  20;
 	int age;
 
 	

@@ -194,7 +194,11 @@ public class Craft extends Objects{
 		for (Objects obj : left_field) {
 			if(obj.priority >= max_priority){
 				if(Vu.eclidianDistance(obj.getPos(), pos) < min_distance && Vu.eclidianDistance(obj.getPos(), pos) > .1){
-					fov.setLeft(this, obj);
+					if(Vu.eclidianDistance(obj.getPos(), pos) < Missile.speed*Missile.life_span){
+						fov.setLeft(this, obj,false);
+					}else{
+						fov.setLeft(this, obj,true);
+					}
 				}
 			}
 		}
@@ -204,7 +208,11 @@ public class Craft extends Objects{
 		for (Objects obj : middle_field) {
 			if(obj.priority >= max_priority){
 				if(Vu.eclidianDistance(obj.getPos(), pos) < min_distance && Vu.eclidianDistance(obj.getPos(), pos) > .1){
-					fov.setMiddle(this, obj);
+					if(Vu.eclidianDistance(obj.getPos(), pos) < Missile.speed*Missile.life_span){
+						fov.setMiddle(this, obj,false);
+					}else{
+						fov.setMiddle(this, obj,true);
+					}
 				}
 			}
 		}
@@ -214,7 +222,11 @@ public class Craft extends Objects{
 		for (Objects obj : right_field) {
 			if(obj.priority >= max_priority){
 				if(Vu.eclidianDistance(obj.getPos(), pos) < min_distance && Vu.eclidianDistance(obj.getPos(), pos) > .1){
-					fov.setLeft(this, obj);
+					if(Vu.eclidianDistance(obj.getPos(), pos) < Missile.speed*Missile.life_span){
+						fov.setRight(this, obj,false);
+					}else{
+						fov.setRight(this, obj,true);
+					}
 				}
 			}
 		}
@@ -360,6 +372,7 @@ public class Craft extends Objects{
 		
 		//Why can't I put enums in local classes????
 		private int[] heading; 	//{left,middle,right} -1 is heading left, 0 is heading straight, 1 is heading right
+		private boolean[] far_away = {false,false,false}; //{left,middle,right}
 		private Space.Types[] type;	//{left,middle,right}
 		private double heading_threshold =(1/Math.sqrt(200));
 		
@@ -368,17 +381,20 @@ public class Craft extends Objects{
 			this.type = new Space.Types[3];
 		}
 		
-		public void setLeft(Craft source, Objects target){
+		public void setLeft(Craft source, Objects target,boolean far){
 			heading[0] = getHeading(source.getDir(), target.getVel());
 			type[0] = target.type;
+			far_away[0] = far;
 		}
-		public void setMiddle(Craft source, Objects target){
+		public void setMiddle(Craft source, Objects target,boolean far){
 			heading[1] = getHeading(source.getDir(), target.getVel());
 			type[1] = target.type;
+			far_away[1] = far;
 		}
-		public void setRight(Craft source, Objects target){
+		public void setRight(Craft source, Objects target,boolean far){
 			heading[2] = getHeading(source.getDir(), target.getVel());
 			type[2] = target.type;
+			far_away[2] = far;
 		}
 
 		private int getHeading(double[] source_direction, double[] target_heading){
@@ -433,6 +449,7 @@ public class Craft extends Objects{
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + getOuterType().hashCode();
+			result = prime * result + Arrays.hashCode(far_away);
 			result = prime * result + Arrays.hashCode(heading);
 			result = prime * result + Arrays.hashCode(type);
 			return result;
@@ -448,6 +465,8 @@ public class Craft extends Objects{
 				return false;
 			Fov other = (Fov) obj;
 			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (!Arrays.equals(far_away, other.far_away))
 				return false;
 			if (!Arrays.equals(heading, other.heading))
 				return false;

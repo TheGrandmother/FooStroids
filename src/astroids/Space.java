@@ -88,7 +88,6 @@ public class Space {
 		int index = 0;
 		for (Objects obj : object_list) {
 			if(obj.kill_me == true && obj.hashCode() == object_list.get(index).hashCode()){
-				
 			}else{
 				tmp.add(obj);
 			}
