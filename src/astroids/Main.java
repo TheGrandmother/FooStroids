@@ -37,7 +37,7 @@ public class Main extends JFrame {
 	BufferedWriter stats_out = null;
 	File color_file = new File("color.txt");
 	BufferedWriter color_out = null;
-	boolean draw_all = false;
+	boolean draw_all = true;
 	
 	int height;
 	int width ;
@@ -84,9 +84,6 @@ public class Main extends JFrame {
 			if(age % 100 ==0 && !m.draw_all){
 				m.tournament(c, m.crafts, 2, 5);
 				System.out.println("Tournament average time: "+accumulated_time/age);
-				for (int i = 0; i < m.crafts.length; i++) {
-					System.out.println(m.crafts[i].decision_list.keySet().size());
-				}
 			}
 		}
 		
