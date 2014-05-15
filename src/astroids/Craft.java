@@ -37,7 +37,7 @@ public class Craft extends Objects{
 	public int eternal_score;
 	
 	Fov fov;
-	HashMap<Fov, Decision> decision_list = new HashMap<Fov, Decision>(200);
+	HashMap<Fov, Decision> decision_list = new HashMap<Fov, Decision>(500);
 
 	public Craft(double[] pos, double[] dir, double[] vel){
 		this.pos = pos.clone();
@@ -348,9 +348,9 @@ public class Craft extends Objects{
 	 */
 	public void mate(Craft mummy){
 		
-		for (Fov fov : mummy.decision_list.keySet()) {
+		for (Fov fov_mum : mummy.decision_list.keySet()) {
 			if(Math.random() >= crossover_factor){
-				decision_list.put(fov, mummy.decision_list.get(fov));
+				decision_list.put(fov_mum, mummy.decision_list.get(fov_mum));
 			}
 		}
 		color = new Color(color.getRed(), (color.getGreen()/2)+(mummy.color.getGreen()/2), mummy.color.getBlue());
@@ -419,12 +419,21 @@ public class Craft extends Objects{
 		}
 		
 		public void print(){
+			System.out.println("~~~~~~~");
 			for (int i = 0; i < 3; i++) {
 				if(i == 0){System.out.print("Left ");}
 				if(i == 1){System.out.print("Right ");}
 				if(i == 2){System.out.print("Middle ");}
 				if(type[i] != null){
 					System.out.print(type[i].toString() + " ");
+					
+					if(far_away[i]){
+						System.out.print(" far ");
+					}else{
+						System.out.print(" close ");
+					}
+					
+					
 					switch (heading[i]) {
 					case 0:
 						System.out.print("heading straight\n");
@@ -442,13 +451,14 @@ public class Craft extends Objects{
 					System.out.println("Empty.");
 				}
 			}
+			System.out.println("~~~~~~~");
 		}
 		
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
+			//result = prime * result + getOuterType().hashCode();
 			result = prime * result + Arrays.hashCode(far_away);
 			result = prime * result + Arrays.hashCode(heading);
 			result = prime * result + Arrays.hashCode(type);
@@ -464,8 +474,8 @@ public class Craft extends Objects{
 			if (getClass() != obj.getClass())
 				return false;
 			Fov other = (Fov) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
+			//if (!getOuterType().equals(other.getOuterType()))
+			//	return false;
 			if (!Arrays.equals(far_away, other.far_away))
 				return false;
 			if (!Arrays.equals(heading, other.heading))
