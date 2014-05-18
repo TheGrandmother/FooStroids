@@ -37,7 +37,7 @@ public class Main extends JFrame {
 	BufferedWriter stats_out = null;
 	File color_file = new File("color.txt");
 	BufferedWriter color_out = null;
-	boolean draw_all = true;
+	boolean draw_all = false;
 	
 	int height;
 	int width ;

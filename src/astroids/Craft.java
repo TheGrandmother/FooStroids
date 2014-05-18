@@ -271,13 +271,17 @@ public class Craft extends Objects{
 		g.setStroke(new BasicStroke(9, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g.drawLine((int)pos[0], (int)pos[1],(int)(1*dir[0]+pos[0]) ,(int)(1*dir[1]+pos[1]));
 		
+//		//UNCOMENT THESE LINES TO SE THE RADIUS
 //		g.setStroke(new BasicStroke());
 //		g.setColor(Color.YELLOW);
 //		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
-		
-		//fuselage.draw(pos, dir, g,this);
 
-		// UNCOMMENT THESE LINES TO SE THE FOV
+//		//UNCOMMENT THESE LINES TO SE SIZE OF decision_list	
+//		g.setColor(Color.GREEN);
+//		g.drawString(""+decision_list.size(), (int)pos[0], (int)pos[1]);
+		
+//		
+//		// UNCOMMENT THESE LINES TO SE THE FOV
 //		int fov_length = 1000;
 //		g.setColor(new Color(255, 255, 0, 100));
 //		g.setStroke(new BasicStroke(1));
@@ -294,7 +298,7 @@ public class Craft extends Objects{
 //		g.setColor(new Color(255, 255, 0, 100));
 //		g.setStroke(new BasicStroke(1));
 //		g.drawLine((int)pos[0], (int)pos[1],(int)(fov_length*left_vector[0]+pos[0]) ,(int)(fov_length*left_vector[1]+pos[1]));
-//		
+		
 	}
 		
 	private void generateName(){
