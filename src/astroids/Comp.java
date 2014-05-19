@@ -51,7 +51,7 @@ class Comp extends JComponent{
 		//long time = System.currentTimeMillis();
 		super.paintComponent(g1);
 		Graphics2D g = (Graphics2D)g1;
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		//g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		if(swap == 0){
 			g.drawImage(i1, null, 0, 0);
 		}else {
@@ -80,13 +80,16 @@ class Comp extends JComponent{
 	
 	public void drawText(){
 		String foo = "FOO::BAR";
+		String credits  = "Code:The_Grandmother";
 		Font foo_font = new Font("Arial", Font.BOLD, (int)(200));
 		Font time_font = new Font("Arial", Font.BOLD, (int)(170*.5));
+		Font credits_font = new Font("Arial", Font.BOLD, 12);
 		String time = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(new Date());
 		String closed = "CLOSED";
 		int foo_width = (int)foo_font.getStringBounds(foo, gr.getFontRenderContext()).getWidth();
 		int foo_height =(int)foo_font.getStringBounds(foo, gr.getFontRenderContext()).getHeight();
 		int time_width = (int)time_font.getStringBounds(time, gr.getFontRenderContext()).getWidth();
+		int credits_width = (int)credits_font.getStringBounds(credits, gr.getFontRenderContext()).getWidth();
 		
 		gr.setColor(new Color(0,190,0));
 		gr.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -95,6 +98,10 @@ class Comp extends JComponent{
 		
 		gr.setFont(time_font);
 		gr.drawString(time, (width-time_width)/2-10, foo_height+50);
+		
+		gr.setColor(Color.red);
+		gr.setFont(credits_font);
+		gr.drawString(credits,width-credits_width-5 , height - 3);
 		
 		
 		
@@ -107,13 +114,13 @@ class Comp extends JComponent{
 		if (swap == 0) {
 			swap =1;
 			
-			gr.dispose();
-			//System.gc();
+			//gr.dispose();
+			System.gc();
 			gr = this.i1.createGraphics();
 		}else{
 			swap= 0;
-			gr.dispose();
-			//System.gc();
+			//gr.dispose();
+			System.gc();
 			gr = this.i2.createGraphics();
 		}
 	}

@@ -52,10 +52,10 @@ public class Space {
 		int score_pos = 22;
 		for (Objects obj : object_list) {
 			g.setColor(Color.lightGray);
-			g.drawString("Name : Current score : Age : Fitness ", 5, 10);
+			g.drawString("ID : Current score : Age : Fitness ", 5, 10);
 			if (obj.getClass() == Craft.class) {
 				g.setColor(obj.color);
-				g.drawString(((Craft)obj).name+" : "+ ((Craft)obj).score + " : " + ((Craft)obj).age + " : "+ ((Craft)obj).getFitness()   , 5, score_pos);
+				g.drawString(((Craft)obj).hashCode()+" : "+ ((Craft)obj).score + " : " + ((Craft)obj).age + " : "+ ((Craft)obj).getFitness()   , 5, score_pos);
 				score_pos += 12;
 			}
 			obj.draw(g);
