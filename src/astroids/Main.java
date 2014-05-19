@@ -31,7 +31,7 @@ public class Main extends JFrame {
 	Asteroid[] asteroids;
 	final int warmup_rounds = 5;
 	final int warmup_length = 400;
-	final long battle_length = 350;	//How many steps a battle will last
+	final long battle_length = 450;	//How many steps a battle will last
 	final long refresh_rate = 40;
 	File stats_file = new File("stats.txt");
 	BufferedWriter stats_out = null;
@@ -46,7 +46,7 @@ public class Main extends JFrame {
 	
 	public static void main(String[] args){
 
-		Main m = new Main(1000,1000,75,0);
+		Main m = new Main(1000,1000,75,10);
 		Comp c = new Comp(m.width, m.height);
 		//m.createFiles();
 		
@@ -192,7 +192,7 @@ public class Main extends JFrame {
 			populateSpace(s, contestants);
 			populateSpace(s, asteroids);
 			long time = 0;
-			while(s.time < battle_length && s.countCrafts() > 1){
+			while(s.time < battle_length && ( (s.countCrafts() > 1 && number_of_asteroids ==0) || ( (s.countCrafts() >= 1 && number_of_asteroids != 0))  )){
 				
 				if(c != null){
 					time = System.currentTimeMillis();

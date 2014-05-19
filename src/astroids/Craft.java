@@ -178,6 +178,7 @@ public class Craft extends Objects{
 		boolean l;
 		boolean r;
 		boolean fr;
+		double min_distance = Double.MAX_VALUE; 
 		
 		for (Objects obj : s.object_list) {	
 				fl	= toTheRight(obj.getPos(),left_end_vector);
@@ -190,7 +191,7 @@ public class Craft extends Objects{
 		}
 
 		int max_priority = 1;
-		double min_distance = Double.MAX_VALUE; 
+		
 		for (Objects obj : left_field) {
 			if(obj.priority >= max_priority){
 				if(Vu.eclidianDistance(obj.getPos(), pos) < min_distance && Vu.eclidianDistance(obj.getPos(), pos) > .1){
@@ -204,7 +205,7 @@ public class Craft extends Objects{
 		}
 		
 		max_priority = 1;
-		min_distance = Double.MAX_VALUE; 
+
 		for (Objects obj : middle_field) {
 			if(obj.priority >= max_priority){
 				if(Vu.eclidianDistance(obj.getPos(), pos) < min_distance && Vu.eclidianDistance(obj.getPos(), pos) > .1){
@@ -218,7 +219,7 @@ public class Craft extends Objects{
 		}
 		
 		max_priority = 1;
-		min_distance = Double.MAX_VALUE; 
+
 		for (Objects obj : right_field) {
 			if(obj.priority >= max_priority){
 				if(Vu.eclidianDistance(obj.getPos(), pos) < min_distance && Vu.eclidianDistance(obj.getPos(), pos) > .1){

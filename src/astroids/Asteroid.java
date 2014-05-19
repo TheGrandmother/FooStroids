@@ -11,7 +11,7 @@ public class Asteroid extends Objects {
 		super.priority = 4;
 		super.type = Space.Types.ASTEROID;
 		super.color = Color.LIGHT_GRAY;
-		super.radius = 10;
+		super.radius = 20;
 	}
 	
 	public void update(Space s){
@@ -23,7 +23,7 @@ public class Asteroid extends Objects {
 		g.fillOval((int)pos[0]-(int)radius, (int)pos[1]-(int)radius, (int)radius*2, (int)radius*2);
 	}
 	
-	//This is completely derp.
+	
 	public void collide(Objects obj) {
 		if(Vu.eclidianDistance(this.getPos(), obj.getPos()) <= (this.radius+obj.radius)){
 			//System.out.println(Vu.eclidianDistance(this.getPos(), obj.getPos()) );

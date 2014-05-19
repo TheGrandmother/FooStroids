@@ -104,7 +104,6 @@ public class Space {
 			if(source.getClass() != Missile.class){
 				for (Objects target : object_list) {
 					if(source != target){
-					
 					source.collide(target);
 					}
 				}
