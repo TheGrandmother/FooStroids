@@ -37,7 +37,7 @@ public class Main extends JFrame {
 	BufferedWriter stats_out = null;
 	File color_file = new File("color.txt");
 	BufferedWriter color_out = null;
-	boolean draw_all = false;
+	boolean draw_all = true;
 	
 	int height;
 	int width ;
@@ -46,7 +46,7 @@ public class Main extends JFrame {
 	
 	public static void main(String[] args){
 
-		Main m = new Main(1000,1000,75,0);
+		Main m = new Main(1280	,1024,75,0);
 		Comp c = new Comp(m.width, m.height);
 		//m.createFiles();
 		
@@ -206,7 +206,7 @@ public class Main extends JFrame {
 					c.drawText();
 					c.drawTheSpace(s);
 					
-					c.printFps(System.currentTimeMillis()-time);
+					//c.printFps(System.currentTimeMillis()-time);
 					c.repaint();
 				}
 			}
