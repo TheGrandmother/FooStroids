@@ -29,7 +29,7 @@ public class Main extends JFrame {
 
 	Craft[] crafts;
 	Asteroid[] asteroids;
-	final int warmup_rounds = 5;
+	final int warmup_rounds = 1;
 	final int warmup_length = 400;
 	final long battle_length = 450;	//How many steps a battle will last
 	final long refresh_rate = 40;
@@ -37,7 +37,7 @@ public class Main extends JFrame {
 	BufferedWriter stats_out = null;
 	File color_file = new File("color.txt");
 	BufferedWriter color_out = null;
-	boolean draw_all = false;
+	boolean draw_all = true;
 	
 	int height;
 	int width ;
@@ -306,8 +306,9 @@ public class Main extends JFrame {
 			crafts[sacrifice_index].generation++;
 		}
 		
-		for (int i = 0; i < crafts.length; i++) {
-			crafts[i].age++;
+		//Changed this to test new fitness function.
+		for (int i = 0; i < indexes.length; i++) {
+			crafts[indexes[i]].age++;
 		}
 	}
 	
