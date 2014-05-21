@@ -1,21 +1,12 @@
 package astroids;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.text.MaskFormatter;
 
 /**
  * This is the Main class for the FooStroids thingamagoop.
@@ -29,10 +20,10 @@ public class Main extends JFrame {
 
 	Craft[] crafts;
 	Asteroid[] asteroids;
-	final int warmup_rounds = 1;
+	final int warmup_rounds = 0;
 	final int warmup_length = 400;
 	final long battle_length = 450;	//How many steps a battle will last
-	final long refresh_rate = 40;
+	final long refresh_rate = 10;
 	File stats_file = new File("stats.txt");
 	BufferedWriter stats_out = null;
 	File color_file = new File("color.txt");
@@ -59,7 +50,9 @@ public class Main extends JFrame {
 		
 		m.createCrafts(m.number_of_crafts);
 		m.createAsteroids(m.number_of_asteroids);
+		System.out.println("Warming up");
 		m.warmUp();
+		System.out.println("Warmed up");
 		
 		c.clearImage();
 		int age = 0;
@@ -197,7 +190,7 @@ public class Main extends JFrame {
 				if(c != null){
 					time = System.currentTimeMillis();
 					c.flip();
-					c.clearImage();
+					//c.clearImage();
 				}
 				s.update(s);
 				
@@ -206,7 +199,7 @@ public class Main extends JFrame {
 					c.drawText();
 					c.drawTheSpace(s);
 					
-					//c.printFps(System.currentTimeMillis()-time);
+					c.printFps(System.currentTimeMillis()-time);
 					c.repaint();
 				}
 			}

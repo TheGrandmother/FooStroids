@@ -53,9 +53,16 @@ class Comp extends JComponent{
 		Graphics2D g = (Graphics2D)g1;
 		//g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		if(swap == 0){
+
 			g.drawImage(i1, null, 0, 0);
+//			Graphics2D gg = (Graphics2D) i1.getGraphics();
+//			gg.setColor(Color.black);
+//			gg.fillRect(0,0, width, height);
 		}else {
 			g.drawImage(i2, null, 0, 0);
+//			Graphics2D gg = (Graphics2D) i1.getGraphics();
+//			gg.setColor(Color.black);
+//			gg.fillRect(0,0, width, height);
 		}
 		g.dispose();
 		//System.out.println("drawtime = " + (System.currentTimeMillis()-time));
@@ -113,15 +120,23 @@ class Comp extends JComponent{
 	public void flip(){
 		if (swap == 0) {
 			swap =1;
-			
-			//gr.dispose();
-			System.gc();
+			//this.i2.
+
+			gr.dispose();
+
+			//System.gc();
 			gr = this.i1.createGraphics();
+			gr.setColor(Color.black);
+			gr.fillRect(0,0, width, height);
 		}else{
 			swap= 0;
-			//gr.dispose();
-			System.gc();
+
+			gr.dispose();
+			
+			//System.gc();
 			gr = this.i2.createGraphics();
+			gr.setColor(Color.black);
+			gr.fillRect(0,0, width, height);
 		}
 	}
 	
