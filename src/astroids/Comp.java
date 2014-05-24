@@ -74,10 +74,33 @@ class Comp extends JComponent{
 	}
 	
 	public void drawTheSpace(Space s){
-
 		s.drawSpace(gr);
-		
 	}
+	
+	public void drawDBG(Space s,Craft[] crafts){
+		for (Craft c : crafts) {
+			int x = (int)c.getPos()[0];
+			int y = (int)c.getPos()[1];
+			
+			gr.setColor(Color.white);
+			gr.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 10));
+			
+			
+			gr.drawString("Desicion list size: " + c.decision_list.size(),x+5, y-10);
+			gr.drawString("Fitness: " + c.getFitness(),x+5, y-20);
+			
+			//What do it see?
+			gr.drawString(c.fov.getString(), x+10, y+10);
+			
+			//What does it do?
+			gr.drawString(c.decision_list.get(c.fov).getString(), x+10 , y +20);
+			
+			
+		}
+	}
+	
+	
+	
 	
 	public void printFps(long time){
 		gr.setColor(Color.green);

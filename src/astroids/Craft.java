@@ -92,7 +92,7 @@ public class Craft extends Objects{
 	
 	public void update(Space s){
 		move();
-		//tmpTakeAction();
+		
 		if(vel[0] <= -max_speed){
 			vel[0] = -max_speed;
 		}
@@ -107,6 +107,7 @@ public class Craft extends Objects{
 		}
 		populateFov(s);
 		makeDecision(fov);
+		
 		
 	}
 	
@@ -179,6 +180,7 @@ public class Craft extends Objects{
 		boolean r;
 		boolean fr;
 		double min_distance = Double.MAX_VALUE; 
+		double distace_factor = 3/2; 	// FActor for changing the "close" threshold
 		
 		for (Objects obj : s.object_list) {	
 				fl	= toTheRight(obj.getPos(),left_end_vector);
@@ -195,7 +197,7 @@ public class Craft extends Objects{
 		for (Objects obj : left_field) {
 			if(obj.priority >= max_priority){
 				if(Vu.eclidianDistance(obj.getPos(), pos) < min_distance && Vu.eclidianDistance(obj.getPos(), pos) > .1){
-					if(Vu.eclidianDistance(obj.getPos(), pos) < Missile.speed*Missile.life_span){
+					if(Vu.eclidianDistance(obj.getPos(), pos) < Missile.speed*Missile.life_span*distace_factor){
 						fov.setLeft(this, obj,false);
 					}else{
 						fov.setLeft(this, obj,true);
@@ -204,12 +206,11 @@ public class Craft extends Objects{
 			}
 		}
 		
-		max_priority = 1;
 
 		for (Objects obj : middle_field) {
 			if(obj.priority >= max_priority){
 				if(Vu.eclidianDistance(obj.getPos(), pos) < min_distance && Vu.eclidianDistance(obj.getPos(), pos) > .1){
-					if(Vu.eclidianDistance(obj.getPos(), pos) < Missile.speed*Missile.life_span){
+					if(Vu.eclidianDistance(obj.getPos(), pos) < Missile.speed*Missile.life_span*distace_factor){
 						fov.setMiddle(this, obj,false);
 					}else{
 						fov.setMiddle(this, obj,true);
@@ -218,12 +219,11 @@ public class Craft extends Objects{
 			}
 		}
 		
-		max_priority = 1;
 
 		for (Objects obj : right_field) {
 			if(obj.priority >= max_priority){
 				if(Vu.eclidianDistance(obj.getPos(), pos) < min_distance && Vu.eclidianDistance(obj.getPos(), pos) > .1){
-					if(Vu.eclidianDistance(obj.getPos(), pos) < Missile.speed*Missile.life_span){
+					if(Vu.eclidianDistance(obj.getPos(), pos) < Missile.speed*Missile.life_span*distace_factor){
 						fov.setRight(this, obj,false);
 					}else{
 						fov.setRight(this, obj,true);
@@ -277,12 +277,8 @@ public class Craft extends Objects{
 //		g.setColor(Color.YELLOW);
 //		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
 
-//		//UNCOMMENT THESE LINES TO SE SIZE OF decision_list	
-//		g.setColor(Color.GREEN);
-//		g.drawString(""+decision_list.size(), (int)pos[0], (int)pos[1]);
-		
 //		
-//		// UNCOMMENT THESE LINES TO SE THE FOV
+////		// UNCOMMENT THESE LINES TO SE THE FOV
 //		int fov_length = 1000;
 //		g.setColor(new Color(255, 255, 0, 100));
 //		g.setStroke(new BasicStroke(1));
@@ -299,7 +295,7 @@ public class Craft extends Objects{
 //		g.setColor(new Color(255, 255, 0, 100));
 //		g.setStroke(new BasicStroke(1));
 //		g.drawLine((int)pos[0], (int)pos[1],(int)(fov_length*left_vector[0]+pos[0]) ,(int)(fov_length*left_vector[1]+pos[1]));
-		
+//		
 	}
 		
 	private void generateName(){
@@ -379,7 +375,7 @@ public class Craft extends Objects{
 		private int[] heading; 	//{left,middle,right} -1 is heading left, 0 is heading straight, 1 is heading right
 		private boolean[] far_away = {false,false,false}; //{left,middle,right}
 		private Space.Types[] type;	//{left,middle,right}
-		private double heading_threshold =(1/Math.sqrt(200));
+		private double heading_threshold =(1/Math.sqrt(100));
 		
 		public Fov(){
 			this.heading = new int[3];
@@ -423,40 +419,41 @@ public class Craft extends Objects{
 			}
 		}
 		
-		public void print(){
-			System.out.println("~~~~~~~");
+		public String getString(){
+			String s = "~";
 			for (int i = 0; i < 3; i++) {
-				if(i == 0){System.out.print("Left ");}
-				if(i == 1){System.out.print("Right ");}
-				if(i == 2){System.out.print("Middle ");}
+				if(i == 2){s += "Left: ";}
+				if(i == 0){s += "Right: ";}
+				if(i == 1){s += "Middle: ";}
 				if(type[i] != null){
-					System.out.print(type[i].toString() + " ");
+					s += type[i].toString() + " ";
 					
 					if(far_away[i]){
-						System.out.print(" far ");
+						s +=  " far ";
 					}else{
-						System.out.print(" close ");
+						s += " close ";
 					}
 					
 					
 					switch (heading[i]) {
 					case 0:
-						System.out.print("heading straight\n");
+						s += "heading straight.   ";
 						break;
 					
 					case 1:
-						System.out.print("heading right\n");
+						s +=  "heading right.  ";
 						break;
 						
 					case -1:
-						System.out.print("heading left\n");
+						s +=  "heading left.   ";
 						break;
 					}
 				}else{
-					System.out.println("Empty.");
+					s += "Nothing.   ";
 				}
 			}
-			System.out.println("~~~~~~~");
+			s +="~";
+			return s ;
 		}
 		
 		@Override
@@ -515,9 +512,46 @@ public class Craft extends Objects{
 					this.turn_right = true;
 				}
 			}
-			this.accelerate = (Math.random() >= 0.5);
-			this.deccelerate = (Math.random() >= 0.5);
+			if(Math.random() <= 0.5){
+				if(Math.random() <= 0.5){
+					this.accelerate = true;
+				}else{
+					this.deccelerate = true;
+				}
+			}
 			this.fire = (Math.random() >= 0.5);
+		}
+		
+		public String getString(){
+			String s = "";
+			if(!turn_left && !turn_right && !accelerate && !fire && !deccelerate){
+				s = "Doing Nothing.";
+				return s;
+			}
+			
+			if (fires) {
+				s += "Fires. ";
+			}
+
+			if (accelerate) {
+				s += "Accelerates. ";
+			}
+			
+			if (deccelerate) {
+				s += "Deccelerates. ";
+			}
+			
+			if (turn_left) {
+				s += "Turns left. ";
+			}
+			
+			if (turn_right) {
+				s += "Turns Right";
+			}
+			
+			
+			
+			return s;
 		}
 		
 	}

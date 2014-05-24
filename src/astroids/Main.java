@@ -20,15 +20,15 @@ public class Main extends JFrame {
 
 	Craft[] crafts;
 	Asteroid[] asteroids;
-	final int warmup_rounds = 0;
+	final int warmup_rounds = 10;
 	final int warmup_length = 400;
 	final long battle_length = 450;	//How many steps a battle will last
-	final long refresh_rate = 10;
+	final long refresh_rate = 50;
 	File stats_file = new File("stats.txt");
 	BufferedWriter stats_out = null;
 	File color_file = new File("color.txt");
 	BufferedWriter color_out = null;
-	boolean draw_all = true;
+	boolean draw_all = false;
 	
 	int height;
 	int width ;
@@ -198,6 +198,7 @@ public class Main extends JFrame {
 					while(System.currentTimeMillis()-time < refresh_rate){}
 					c.drawText();
 					c.drawTheSpace(s);
+					c.drawDBG(s, contestants);
 					
 					c.printFps(System.currentTimeMillis()-time);
 					c.repaint();
