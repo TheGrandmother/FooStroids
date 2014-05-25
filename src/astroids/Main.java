@@ -2,10 +2,14 @@ package astroids;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import javax.swing.DebugGraphics;
 import javax.swing.JFrame;
 
 /**
@@ -16,24 +20,34 @@ import javax.swing.JFrame;
  */
 
 @SuppressWarnings("serial")
-public class Main extends JFrame {
+public class Main extends JFrame implements KeyListener{
 
 	Craft[] crafts;
 	Asteroid[] asteroids;
 	final int warmup_rounds = 10;
 	final int warmup_length = 400;
 	final long battle_length = 450;	//How many steps a battle will last
-	final long refresh_rate = 50;
+	final long refresh_rate = 40;
+	final long refresh_limit = 35;
 	File stats_file = new File("stats.txt");
 	BufferedWriter stats_out = null;
 	File color_file = new File("color.txt");
 	BufferedWriter color_out = null;
-	boolean draw_all = false;
+	boolean draw_all = true;
+	boolean debug_mode = false;
+	boolean turbo_mode = false;
+	boolean closed = false;
 	
 	int height;
 	int width ;
 	int number_of_crafts;
 	int number_of_asteroids;
+	int daddy_dbg = 0;
+	int mummy_dbg = 0;
+	int sacrifice_debug = 0;
+	int tournaments = 0;
+	int draws = 0;
+	
 	
 	public static void main(String[] args){
 
@@ -45,6 +59,8 @@ public class Main extends JFrame {
 		m.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		m.pack();
 		m.setVisible(true);
+		m.setFocusable(true);
+		m.addKeyListener(m);
 		c.setVisible(true);
 		
 		
@@ -55,28 +71,12 @@ public class Main extends JFrame {
 		System.out.println("Warmed up");
 		
 		c.clearImage();
-		int age = 0;
-		long time = 0;
-		int accumulated_time = 0;
 		while(true){
-			time = System.currentTimeMillis();
-			if(m.draw_all){
+
+			if(!m.turbo_mode){
 				m.tournament(c, m.crafts, 3, 5);
 			}else{
 				m.tournament(null, m.crafts, 3, 5);
-			}
-			accumulated_time += (System.currentTimeMillis()-time);
-			
-			age++;
-//			if(age % 100 == 0){
-//				writer(generateStats(m.crafts), m.stats_file, m.stats_out);
-//				writer(generateColorStats(m.crafts), m.color_file, m.color_out);
-//			}
-			
-			//We only  draw every tenth tournament.
-			if(age % 100 ==0 && !m.draw_all){
-				m.tournament(c, m.crafts, 2, 5);
-				System.out.println("Tournament average time: "+accumulated_time/age);
 			}
 		}
 		
@@ -193,14 +193,14 @@ public class Main extends JFrame {
 					//c.clearImage();
 				}
 				s.update(s);
-				
 				if(c != null){
 					while(System.currentTimeMillis()-time < refresh_rate){}
-					c.drawText();
+					c.drawText(closed,turbo_mode);
 					c.drawTheSpace(s);
-					c.drawDBG(s, contestants);
-					
-					c.printFps(System.currentTimeMillis()-time);
+					if(debug_mode){
+						c.drawDBG(s, contestants,System.currentTimeMillis()-time, daddy_dbg, mummy_dbg, sacrifice_debug
+								,(int)battle_length,(int)s.time,tournaments,draws);
+					}
 					c.repaint();
 				}
 			}
@@ -258,52 +258,55 @@ public class Main extends JFrame {
 		battle(null, team3,rounds);
 
 		Craft daddy = null;
-		int max_score = Integer.MIN_VALUE;
-		for (int i = 0; i < crafts.length; i++) {
-			if(crafts[i].score >= max_score){
-				daddy = crafts[i];
-				max_score = crafts[i].score;
+		int max_fitness = Integer.MIN_VALUE;
+		for (int i = 0; i < indexes.length; i++) {
+			if(crafts[indexes[i]].getFitness() >= max_fitness){
+				daddy = crafts[indexes[i]];
+				max_fitness = crafts[indexes[i]].getFitness();
 			}
 		}
 		
 		Craft mummy = null;
-		int second_score = Integer.MIN_VALUE;
-		for (int i = 0; i < crafts.length; i++) {
-			if(crafts[i].score >= second_score && crafts[i].score < max_score){
-				mummy = crafts[i];
-				second_score = crafts[i].score;
+		int second_fitness = Integer.MIN_VALUE;
+		for (int i = 0; i < indexes.length; i++) {
+			if(crafts[indexes[i]].getFitness() >= second_fitness && crafts[indexes[i]].getFitness() < max_fitness){
+				mummy = crafts[indexes[i]];
+				second_fitness = crafts[indexes[i]].score;
 			}
 		}
 		
 		Craft sacrifice = null;
-		int min_score = Integer.MAX_VALUE;
+		//int min_score = Integer.MAX_VALUE;
 		int sacrifice_index =0;
 		int min_fitness = Integer.MAX_VALUE;
-		for (int i = 0; i < crafts.length; i++) {
-			if(crafts[i].score <= min_score && crafts[i].score < max_score && crafts[i].score < second_score && crafts[i].getFitness() <=min_fitness ){
-				sacrifice = crafts[i];
-				min_score = crafts[i].score;
+		for (int i = 0; i < indexes.length; i++) {
+			if(crafts[indexes[i]].score <= min_fitness && crafts[indexes[i]].getFitness() < max_fitness && crafts[indexes[i]].getFitness() < second_fitness){
+				sacrifice = crafts[indexes[i]];
+				min_fitness = crafts[indexes[i]].getFitness();
 				sacrifice_index = i;
-				min_fitness = crafts[i].getFitness();
+				//min_fitness = crafts[indexes[i]].getFitness();
 			}
 		}
 		
 		if(sacrifice == null || daddy == null || sacrifice ==null){
 			System.out.println("It was a tie :(");
+			draws++;
 		}else{
-			//System.out.println("Daddy has : " + daddy.score);
-			//System.out.println("Mummy has : " + mummy.score);
-			//System.out.println("Sacrifice has : " + sacrifice.score);
 			
+			sacrifice_debug = crafts[sacrifice_index].getFitness();
 			crafts[sacrifice_index] = daddy.clone();
 			crafts[sacrifice_index].mate(mummy);
-			crafts[sacrifice_index].generation++;
+			//crafts[sacrifice_index].generation++;
+			daddy_dbg = daddy.getFitness();
+			mummy_dbg = mummy.getFitness();
+			
 		}
 		
 		//Changed this to test new fitness function.
 		for (int i = 0; i < indexes.length; i++) {
 			crafts[indexes[i]].age++;
 		}
+		tournaments++;
 	}
 	
 	private static int[] randomPermutation(int size, int picks){
@@ -411,6 +414,52 @@ public class Main extends JFrame {
 		}
 		s += "{"+crafts[crafts.length-1].color.getRed()+","+crafts[crafts.length-1].color.getGreen() +","+ crafts[crafts.length-1].color.getBlue()+"}}";
 		return s;
+	}
+
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+	
+	}
+	
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_D:
+			if(debug_mode){
+				debug_mode = false;
+			}else{
+				debug_mode = true;
+			}
+			break;
+		
+		case KeyEvent.VK_SPACE:
+			if(closed){
+				closed = false;
+			}else{
+				closed = true;
+			}
+			break;
+		
+		case KeyEvent.VK_T:
+			if(turbo_mode){
+				turbo_mode = false;
+			}else{
+				turbo_mode = true;
+				//System.out.println("Turbo_mode == true");
+			}
+			break;
+			
+		default:
+			break;
+		}
+	}
+	
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		
 	}
 	
 }

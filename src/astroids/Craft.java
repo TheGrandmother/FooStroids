@@ -114,14 +114,15 @@ public class Craft extends Objects{
 	private void makeDecision(Fov fov){
 		if(!decision_list.containsKey(fov)){
 			decision_list.put(fov, new Decision());
-		}else{
-			Decision dec = decision_list.get(fov);
-			if(dec.accelerate){accelerate();}
-			if(dec.deccelerate){decelerate();}
-			if(dec.turn_left){rotateLeft();}
-			if(dec.turn_right){rotateRight();}
-			if(dec.fire){fires = true;}
 		}
+
+		Decision dec = decision_list.get(fov);
+		if(dec.accelerate){accelerate();}
+		if(dec.deccelerate){decelerate();}
+		if(dec.turn_left){rotateLeft();}
+		if(dec.turn_right){rotateRight();}
+		if(dec.fire){fires = true;}
+	
 		
 	}
 	
