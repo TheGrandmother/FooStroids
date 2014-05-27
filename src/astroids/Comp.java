@@ -140,7 +140,7 @@ class Comp extends JComponent{
 		
 		
 		gr.setColor(new Color(0,190,0));
-		gr.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		gr.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		gr.setFont(foo_font);
 		gr.drawString(foo, (width-foo_width)/2-7, foo_height-50);
 		
@@ -168,7 +168,7 @@ class Comp extends JComponent{
 
 			gr.dispose();
 
-			//System.gc();
+			System.gc();
 			gr = this.i1.createGraphics();
 			gr.setColor(Color.black);
 			gr.fillRect(0,0, width, height);
@@ -177,7 +177,7 @@ class Comp extends JComponent{
 
 			gr.dispose();
 			
-			//System.gc();
+			System.gc();
 			gr = this.i2.createGraphics();
 			gr.setColor(Color.black);
 			gr.fillRect(0,0, width, height);

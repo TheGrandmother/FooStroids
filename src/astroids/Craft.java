@@ -49,9 +49,9 @@ public class Craft extends Objects{
 		super.radius = 7;
 		super.kill_me = false;
 		super.fires = false;
-		left_end_vector = Vu.rotate(dir,fov_angle*2);
+		left_end_vector = Vu.rotate(dir,fov_angle*3);
 		left_vector = Vu.rotate(dir,fov_angle/2);
-		right_end_vector = Vu.rotate(dir,-fov_angle*2);
+		right_end_vector = Vu.rotate(dir,-fov_angle*3);
 		right_vector = Vu.rotate(dir,-fov_angle/2);
 		generation = 0;
 		score = 0;
@@ -169,9 +169,9 @@ public class Craft extends Objects{
 	 */
 	private void populateFov(Space s){
 		fov = new Fov();
-		left_end_vector = Vu.normalize(Vu.rotate(dir,fov_angle*2));
+		left_end_vector = Vu.normalize(Vu.rotate(dir,fov_angle*3));
 		left_vector = Vu.normalize(Vu.rotate(dir,fov_angle/2));
-		right_end_vector = Vu.normalize(Vu.rotate(dir,-fov_angle*2));
+		right_end_vector = Vu.normalize(Vu.rotate(dir,-fov_angle*3));
 		right_vector = Vu.normalize(Vu.rotate(dir,-fov_angle/2));
 		LinkedList<Objects> left_field = new LinkedList<Objects>();
 		LinkedList<Objects> right_field = new LinkedList<Objects>();
@@ -278,7 +278,7 @@ public class Craft extends Objects{
 //		g.setColor(Color.YELLOW);
 //		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
 
-//		
+		
 ////		// UNCOMMENT THESE LINES TO SE THE FOV
 //		int fov_length = 1000;
 //		g.setColor(new Color(255, 255, 0, 100));

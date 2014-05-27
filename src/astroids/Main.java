@@ -24,16 +24,16 @@ public class Main extends JFrame implements KeyListener{
 
 	Craft[] crafts;
 	Asteroid[] asteroids;
-	final int warmup_rounds = 10;
+	final int warmup_rounds = 0;
 	final int warmup_length = 400;
 	final long battle_length = 450;	//How many steps a battle will last
 	final long refresh_rate = 40;
-	final long refresh_limit = 35;
+	final long refresh_limit = 0;
 	File stats_file = new File("stats.txt");
 	BufferedWriter stats_out = null;
 	File color_file = new File("color.txt");
 	BufferedWriter color_out = null;
-	boolean draw_all = true;
+	//boolean draw_all = true;
 	boolean debug_mode = false;
 	boolean turbo_mode = false;
 	boolean closed = false;
@@ -271,7 +271,7 @@ public class Main extends JFrame implements KeyListener{
 		for (int i = 0; i < indexes.length; i++) {
 			if(crafts[indexes[i]].getFitness() >= second_fitness && crafts[indexes[i]].getFitness() < max_fitness){
 				mummy = crafts[indexes[i]];
-				second_fitness = crafts[indexes[i]].score;
+				second_fitness = crafts[indexes[i]].getFitness();
 			}
 		}
 		
@@ -288,7 +288,7 @@ public class Main extends JFrame implements KeyListener{
 			}
 		}
 		
-		if(sacrifice == null || daddy == null || sacrifice ==null){
+		if(sacrifice == null || daddy == null || mummy ==null){
 			System.out.println("It was a tie :(");
 			draws++;
 		}else{
@@ -296,7 +296,7 @@ public class Main extends JFrame implements KeyListener{
 			sacrifice_debug = crafts[sacrifice_index].getFitness();
 			crafts[sacrifice_index] = daddy.clone();
 			crafts[sacrifice_index].mate(mummy);
-			//crafts[sacrifice_index].generation++;
+			crafts[sacrifice_index].generation++;
 			daddy_dbg = daddy.getFitness();
 			mummy_dbg = mummy.getFitness();
 			
