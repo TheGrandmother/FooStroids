@@ -284,12 +284,12 @@ public class Main extends JFrame implements KeyListener{
 				sacrifice = crafts[indexes[i]];
 				min_fitness = crafts[indexes[i]].getFitness();
 				sacrifice_index = i;
-				//min_fitness = crafts[indexes[i]].getFitness();
+				
 			}
 		}
 		
 		if(sacrifice == null || daddy == null || mummy ==null){
-			System.out.println("It was a tie :(");
+			//System.out.println("It was a tie :(");
 			draws++;
 		}else{
 			
