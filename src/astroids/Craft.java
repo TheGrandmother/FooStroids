@@ -20,7 +20,7 @@ public class Craft extends Objects{
 	final double thrust_power = .7; 
 	final double rotation_constant = Math.PI/30;
 	final double fov_angle = Math.PI/12;
-	final double max_speed = 6;
+	final double max_speed = 5;
 	final double mutation_probability = 0.05;
 	final double crossover_factor = 0.4;
 	
@@ -384,40 +384,56 @@ public class Craft extends Objects{
 		}
 		
 		public void setLeft(Craft source, Objects target,boolean far){
-			heading[0] = getHeading(source.getDir(), target.getVel());
+			heading[0] = getHeading(source, target);
 			type[0] = target.type;
 			far_away[0] = far;
 		}
 		public void setMiddle(Craft source, Objects target,boolean far){
-			heading[1] = getHeading(source.getDir(), target.getVel());
+			heading[1] = getHeading(source, target);
 			type[1] = target.type;
 			far_away[1] = far;
 		}
 		public void setRight(Craft source, Objects target,boolean far){
-			heading[2] = getHeading(source.getDir(), target.getVel());
+			heading[2] = getHeading(source, target);
 			type[2] = target.type;
 			far_away[2] = far;
 		}
 
-		private int getHeading(double[] source_direction, double[] target_heading){
-			double[] s1 = new double[3];
-			s1[0] = source_direction[0];
-			s1[1] = source_direction[1];
-			s1[2] = 0;
-			
-			double[] t1 = new double[3];
-			t1[0] = target_heading[0];
-			t1[1] = target_heading[1];
-			t1[2] = 0;
-			
-			double res = Vu.crossProduct(t1, s1)[2];
-			if(res < -heading_threshold){
-				return -1;
-			}else if(res > heading_threshold){
+		private int getHeading(Objects source, Objects target){
+			double heading_threshold = Math.PI/15;
+			double[] source_heading = Vu.normalize(Vu.sub(source.getDir(), source.pos));
+			double[] target_heading = Vu.normalize(Vu.sub(target.getVel(), target.pos));
+			double scalar = Vu.scalarProduct(source_heading, target_heading);
+			double angle = Math.acos(scalar);
+			int sign = Craft.this.toTheRight(target_heading, source_heading) ? 1: -1;
+			if(angle < heading_threshold){
 				return 1;
-			}else{
+			}else if(angle < 0){
 				return 0;
+			}else{
+				return 2;
 			}
+			
+			
+			
+//			double[] s1 = new double[3];
+//			s1[0] = source_direction[0];
+//			s1[1] = source_direction[1];
+//			s1[2] = 0;
+//			
+//			double[] t1 = new double[3];
+//			t1[0] = target_heading[0];
+//			t1[1] = target_heading[1];
+//			t1[2] = 0;
+//			
+//			double res = Vu.crossProduct(t1, s1)[2];
+//			if(res < -heading_threshold){
+//				return -1;
+//			}else if(res > heading_threshold){
+//				return 1;
+//			}else{
+//				return 0;
+//			}
 		}
 		
 		public String getString(){

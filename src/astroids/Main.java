@@ -27,7 +27,7 @@ public class Main extends JFrame implements KeyListener{
 	final int warmup_rounds = 0;
 	final int warmup_length = 400;
 	final long battle_length = 450;	//How many steps a battle will last
-	final long refresh_rate = 10;
+	final long refresh_rate = 25;
 	final long refresh_limit = 0;
 	File stats_file = new File("stats.txt");
 	BufferedWriter stats_out = null;
