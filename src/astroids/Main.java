@@ -27,7 +27,7 @@ public class Main extends JFrame implements KeyListener{
 	final int warmup_rounds = 0;
 	final int warmup_length = 400;
 	final long battle_length = 450;	//How many steps a battle will last
-	final long refresh_rate = 40;
+	final long refresh_rate = 10;
 	final long refresh_limit = 0;
 	File stats_file = new File("stats.txt");
 	BufferedWriter stats_out = null;
@@ -199,7 +199,7 @@ public class Main extends JFrame implements KeyListener{
 					c.drawTheSpace(s);
 					if(debug_mode){
 						c.drawDBG(s, contestants,System.currentTimeMillis()-time, daddy_dbg, mummy_dbg, sacrifice_debug
-								,(int)battle_length,(int)s.time,tournaments,draws);
+								,(int)battle_length,(int)s.time,tournaments,draws,this);
 					}
 					c.repaint();
 				}
@@ -275,15 +275,15 @@ public class Main extends JFrame implements KeyListener{
 			}
 		}
 		
+
 		Craft sacrifice = null;
-		//int min_score = Integer.MAX_VALUE;
-		int sacrifice_index =0;
+		int sacrifice_index = -1;
 		int min_fitness = Integer.MAX_VALUE;
 		for (int i = 0; i < indexes.length; i++) {
-			if(crafts[indexes[i]].score <= min_fitness && crafts[indexes[i]].getFitness() < max_fitness && crafts[indexes[i]].getFitness() < second_fitness){
+			if(crafts[indexes[i]].getFitness() <= min_fitness && crafts[indexes[i]].getFitness() < second_fitness&& crafts[indexes[i]].getFitness() < max_fitness){
 				sacrifice = crafts[indexes[i]];
 				min_fitness = crafts[indexes[i]].getFitness();
-				sacrifice_index = i;
+				sacrifice_index = indexes[i];
 				
 			}
 		}
@@ -292,7 +292,7 @@ public class Main extends JFrame implements KeyListener{
 			//System.out.println("It was a tie :(");
 			draws++;
 		}else{
-			
+
 			sacrifice_debug = crafts[sacrifice_index].getFitness();
 			crafts[sacrifice_index] = daddy.clone();
 			crafts[sacrifice_index].mate(mummy);

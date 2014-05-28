@@ -78,9 +78,10 @@ class Comp extends JComponent{
 	}
 	
 	public void drawDBG(Space s,Craft[] crafts,long time,int daddy, int mummy, int sacrifice,int length, int tick
-			,int tournaments, int draws){
+			,int tournaments, int draws,Main m){
 		gr.setColor(Color.white);
 		gr.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 10));
+		int yy = 10;
 		for (Craft c : crafts) {
 			int x = (int)c.getPos()[0];
 			int y = (int)c.getPos()[1];
@@ -94,10 +95,16 @@ class Comp extends JComponent{
 			
 			//What does it do?
 			gr.drawString(c.decision_list.get(c.fov).getString(), x+10 , y +20);
+			
+			gr.drawString(c.hashCode() + " : " + c.getFitness(),0,yy);
+			yy += 10;
+			
+			
 		}
 			
 			gr.drawString("FPS: " + (int)(1./(time*0.001))+"", 0, height-5);
 			
+			gr.drawString("Total number of crafts: " + m.crafts.length ,0,height-80);
 			gr.drawString("Tournaments: " + tournaments,0,height-70);
 			gr.drawString("Draws: " + draws,0,height-60);
 			gr.drawString("Remaining time: " + (length - tick),0,height-50);
