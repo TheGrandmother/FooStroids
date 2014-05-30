@@ -24,10 +24,10 @@ public class Main extends JFrame implements KeyListener{
 
 	Craft[] crafts;
 	Asteroid[] asteroids;
-	final int warmup_rounds = 0;
+	final int warmup_rounds = 10;
 	final int warmup_length = 400;
 	final long battle_length = 450;	//How many steps a battle will last
-	final long refresh_rate = 25;
+	final long refresh_rate = 40;
 	final long refresh_limit = 0;
 	File stats_file = new File("stats.txt");
 	BufferedWriter stats_out = null;
@@ -51,7 +51,7 @@ public class Main extends JFrame implements KeyListener{
 	
 	public static void main(String[] args){
 
-		Main m = new Main(1280	,1024,75,0);
+		Main m = new Main(1280,1024,75,0);
 		Comp c = new Comp(m.width, m.height);
 		//m.createFiles();
 		
@@ -195,7 +195,7 @@ public class Main extends JFrame implements KeyListener{
 				s.update(s);
 				if(c != null){
 					while(System.currentTimeMillis()-time < refresh_rate){}
-					c.drawText(closed,turbo_mode);
+					//c.drawText(closed,turbo_mode);
 					c.drawTheSpace(s);
 					if(debug_mode){
 						c.drawDBG(s, contestants,System.currentTimeMillis()-time, daddy_dbg, mummy_dbg, sacrifice_debug

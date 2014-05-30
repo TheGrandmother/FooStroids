@@ -278,7 +278,7 @@ public class Craft extends Objects{
 //		g.setColor(Color.YELLOW);
 //		g.drawOval((int)(pos[0]-radius), (int)(pos[1]-radius), 2*(int)radius, 2*(int)radius);
 
-		
+//		
 ////		// UNCOMMENT THESE LINES TO SE THE FOV
 //		int fov_length = 1000;
 //		g.setColor(new Color(255, 255, 0, 100));
@@ -405,7 +405,6 @@ public class Craft extends Objects{
 			double[] target_heading = Vu.normalize(Vu.sub(target.getVel(), target.pos));
 			double scalar = Vu.scalarProduct(source_heading, target_heading);
 			double angle = Math.acos(scalar);
-			int sign = Craft.this.toTheRight(target_heading, source_heading) ? 1: -1;
 			if(angle < heading_threshold){
 				return 1;
 			}else if(angle < 0){
@@ -413,27 +412,6 @@ public class Craft extends Objects{
 			}else{
 				return 2;
 			}
-			
-			
-			
-//			double[] s1 = new double[3];
-//			s1[0] = source_direction[0];
-//			s1[1] = source_direction[1];
-//			s1[2] = 0;
-//			
-//			double[] t1 = new double[3];
-//			t1[0] = target_heading[0];
-//			t1[1] = target_heading[1];
-//			t1[2] = 0;
-//			
-//			double res = Vu.crossProduct(t1, s1)[2];
-//			if(res < -heading_threshold){
-//				return -1;
-//			}else if(res > heading_threshold){
-//				return 1;
-//			}else{
-//				return 0;
-//			}
 		}
 		
 		public String getString(){
@@ -446,22 +424,22 @@ public class Craft extends Objects{
 					s += type[i].toString() + " ";
 					
 					if(far_away[i]){
-						s +=  " far ";
+						s +=  " far. ";
 					}else{
-						s += " close ";
+						s += " close. ";
 					}
 					
 					
 					switch (heading[i]) {
-					case 0:
+					case 1:
 						s += "heading straight.   ";
 						break;
 					
-					case 1:
+					case 2:
 						s +=  "heading right.  ";
 						break;
 						
-					case -1:
+					case 0:
 						s +=  "heading left.   ";
 						break;
 					}
