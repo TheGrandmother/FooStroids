@@ -51,7 +51,7 @@ public class Main extends JFrame implements KeyListener{
 	
 	public static void main(String[] args){
 
-		Main m = new Main(1280,1024,75,0);
+		Main m = new Main(500,500,75,0);
 		Comp c = new Comp(m.width, m.height);
 		//m.createFiles();
 		
@@ -97,7 +97,7 @@ public class Main extends JFrame implements KeyListener{
 	private void createCrafts(int n){
 		crafts = new Craft[n];
 		for (int i = 0; i < n; i++) {
-			crafts[i] = new Craft(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1), Vu.random(0, 0, 0, 0));
+			crafts[i] = new Craft(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1), Vu.random(0, 0, 0, 0), new TrivialAi());
 			crafts[i].color = new Color( (int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
 			
 			
@@ -447,7 +447,7 @@ public class Main extends JFrame implements KeyListener{
 				turbo_mode = false;
 			}else{
 				turbo_mode = true;
-				//System.out.println("Turbo_mode == true");
+				System.out.println("Turbo_mode == true");
 			}
 			break;
 			

@@ -86,7 +86,7 @@ class Comp extends JComponent{
 			int x = (int)c.getPos()[0];
 			int y = (int)c.getPos()[1];
 			
-			gr.drawString("Desicion list size: " + c.decision_list.size(),x+5, y-10);
+			gr.drawString("Desicion status : " + c.ai.status(),x+5, y-10);
 			gr.drawString("Fitness: " + c.getFitness(),x+5, y-20);
 			gr.drawString("Age: " + c.age,x+5,y-30);
 			
@@ -94,7 +94,7 @@ class Comp extends JComponent{
 			gr.drawString(c.fov.getString(), x+10, y+10);
 			
 			//What does it do?
-			gr.drawString(c.decision_list.get(c.fov).getString(), x+10 , y +20);
+			gr.drawString(c.ai.printDecision(c.fov), x+10 , y +20);
 			
 			gr.drawString(c.hashCode() + " : " + c.getFitness(),0,yy);
 			yy += 10;

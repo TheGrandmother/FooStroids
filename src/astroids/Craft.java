@@ -36,10 +36,11 @@ public class Craft extends Objects{
 	public int age;
 	public int eternal_score;
 	
+	final Ai ai;
+	
 	Fov fov;
-	HashMap<Fov, Decision> decision_list = new HashMap<Fov, Decision>(500);
 
-	public Craft(double[] pos, double[] dir, double[] vel){
+	public Craft(double[] pos, double[] dir, double[] vel, Ai ai){
 		this.pos = pos.clone();
 		this.dir = Vu.normalize(dir.clone());
 		this.vel = vel.clone();
@@ -49,6 +50,7 @@ public class Craft extends Objects{
 		super.radius = 7;
 		super.kill_me = false;
 		super.fires = false;
+		this.ai = ai;
 		left_end_vector = Vu.rotate(dir,fov_angle*3);
 		left_vector = Vu.rotate(dir,fov_angle/2);
 		right_end_vector = Vu.rotate(dir,-fov_angle*3);
@@ -106,25 +108,12 @@ public class Craft extends Objects{
 			vel[1] = max_speed;
 		}
 		populateFov(s);
-		makeDecision(fov);
+		ai.makeDecision(this,fov);
 		
 		
 	}
 	
-	private void makeDecision(Fov fov){
-		if(!decision_list.containsKey(fov)){
-			decision_list.put(fov, new Decision());
-		}
-
-		Decision dec = decision_list.get(fov);
-		if(dec.accelerate){accelerate();}
-		if(dec.deccelerate){decelerate();}
-		if(dec.turn_left){rotateLeft();}
-		if(dec.turn_right){rotateRight();}
-		if(dec.fire){fires = true;}
 	
-		
-	}
 	
 	/**
 	 * This method will kill missiles as well.
@@ -326,9 +315,8 @@ public class Craft extends Objects{
 	 * All though it resets the score and the age.
 	 */
 	public Craft clone(){
-		Craft clone = new Craft(pos, dir, vel);
+		Craft clone = new Craft(pos, dir, vel,ai);
 		clone.fov = fov;
-		clone.decision_list = decision_list;
 		clone.color = color;
 		clone.score = 0;
 		clone.eternal_score = 0;
@@ -350,20 +338,11 @@ public class Craft extends Objects{
 	 */
 	public void mate(Craft mummy){
 		
-		for (Fov fov_mum : mummy.decision_list.keySet()) {
-			if(Math.random() >= crossover_factor){
-				decision_list.put(fov_mum, mummy.decision_list.get(fov_mum));
-			}
-		}
-		color = new Color(color.getRed(), (color.getGreen()/2)+(mummy.color.getGreen()/2), mummy.color.getBlue());
-
 		
-		if(Math.random() <= mutation_probability){
-			int s = (int)(Math.random()*decision_list.size());
-			decision_list.put((Fov) decision_list.keySet().toArray()[s], new Decision());
-			color = new Color(255-color.getRed(),255-color.getGreen(),255-color.getBlue());
-			
-		}
+		ai.crossover(mummy, crossover_factor);
+		color = new Color(color.getRed(), (color.getGreen()/2)+(mummy.color.getGreen()/2), mummy.color.getBlue());
+		ai.mutate(this, mutation_probability);
+
 	}
 	
 	public int getFitness(){
@@ -487,69 +466,7 @@ public class Craft extends Objects{
 		}
 
 	}
-	
-	public class Decision{
-		boolean turn_left = false;
-		boolean turn_right= false;
-		boolean accelerate= false;
-		boolean deccelerate= false;
-		boolean fire= false;
-		
-		public Decision(){
-			random();
-		}
-		
-		public void random(){
-			if(Math.random() <= 0.5){
-				if(Math.random() <= 0.5){
-					this.turn_left = true;
-				}else{
-					this.turn_right = true;
-				}
-			}
-			if(Math.random() <= 0.5){
-				if(Math.random() <= 0.5){
-					this.accelerate = true;
-				}else{
-					this.deccelerate = true;
-				}
-			}
-			this.fire = (Math.random() >= 0.5);
-		}
-		
-		public String getString(){
-			String s = "";
-			if(!turn_left && !turn_right && !accelerate && !fire && !deccelerate){
-				s = "Doing Nothing.";
-				return s;
-			}
-			
-			if (fires) {
-				s += "Fires. ";
-			}
 
-			if (accelerate) {
-				s += "Accelerates. ";
-			}
-			
-			if (deccelerate) {
-				s += "Deccelerates. ";
-			}
-			
-			if (turn_left) {
-				s += "Turns left. ";
-			}
-			
-			if (turn_right) {
-				s += "Turns Right";
-			}
-			
-			
-			
-			return s;
-		}
-		
-	}
 
 
 }
