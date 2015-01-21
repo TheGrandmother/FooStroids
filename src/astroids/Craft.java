@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+
+import astroids.Algorithms.Ai;
 /**
  * 
  * This class is the craft which will be doing all of the cool things in FooStroid.
@@ -36,21 +38,20 @@ public class Craft extends Objects{
 	public int age;
 	public int eternal_score;
 	
-	final Ai ai;
+	private Ai ai;
 	
 	Fov fov;
 
-	public Craft(double[] pos, double[] dir, double[] vel, Ai ai){
+	public Craft(double[] pos, double[] dir, double[] vel){
 		this.pos = pos.clone();
 		this.dir = Vu.normalize(dir.clone());
 		this.vel = vel.clone();
 		super.priority = 3;
 		super.type = Space.Types.SHIP;
-		super.color = Color.CYAN;
+		super.setColor(Color.CYAN);
 		super.radius = 7;
 		super.kill_me = false;
-		super.fires = false;
-		this.ai = ai;
+		super.setFires(false);
 		left_end_vector = Vu.rotate(dir,fov_angle*3);
 		left_vector = Vu.rotate(dir,fov_angle/2);
 		right_end_vector = Vu.rotate(dir,-fov_angle*3);
@@ -108,7 +109,7 @@ public class Craft extends Objects{
 			vel[1] = max_speed;
 		}
 		populateFov(s);
-		ai.makeDecision(this,fov);
+		getAi().makeDecision(this,fov);
 		
 		
 	}
@@ -255,10 +256,10 @@ public class Craft extends Objects{
 		g.setStroke(new BasicStroke(11, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g.drawLine((int)pos[0], (int)pos[1],(int)(dir[0]+pos[0]) ,(int)(dir[1]+pos[1]));
 		
-		g.setColor(color);
+		g.setColor(getColor());
 		g.setStroke(new BasicStroke(3));
 		g.drawLine((int)pos[0], (int)pos[1],(int)(15*dir[0]+pos[0]) ,(int)(15*dir[1]+pos[1]));
-		g.setColor(color);
+		g.setColor(getColor());
 		g.setStroke(new BasicStroke(9, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g.drawLine((int)pos[0], (int)pos[1],(int)(1*dir[0]+pos[0]) ,(int)(1*dir[1]+pos[1]));
 		
@@ -315,15 +316,20 @@ public class Craft extends Objects{
 	 * All though it resets the score and the age.
 	 */
 	public Craft clone(){
-		Craft clone = new Craft(pos, dir, vel,ai);
+		Craft clone = new Craft(pos, dir, vel);
+		clone.setAi(ai);
 		clone.fov = fov;
-		clone.color = color;
+		clone.setColor(getColor());
 		clone.score = 0;
 		clone.eternal_score = 0;
 		clone.age = 1;
 		clone.generation = generation;
 		
 		return clone;
+	}
+	
+	public void setAi(Ai ai){
+		this.ai = ai;
 	}
 	
 	/**
@@ -339,9 +345,9 @@ public class Craft extends Objects{
 	public void mate(Craft mummy){
 		
 		
-		ai.crossover(mummy, crossover_factor);
-		color = new Color(color.getRed(), (color.getGreen()/2)+(mummy.color.getGreen()/2), mummy.color.getBlue());
-		ai.mutate(this, mutation_probability);
+		getAi().crossover(mummy, crossover_factor);
+		setColor(new Color(getColor().getRed(), (getColor().getGreen()/2)+(mummy.getColor().getGreen()/2), mummy.getColor().getBlue()));
+		getAi().mutate(this, mutation_probability);
 
 	}
 	
@@ -349,6 +355,10 @@ public class Craft extends Objects{
 		return (eternal_score/age);
 	}
 	
+	public Ai getAi() {
+		return ai;
+	}
+
 	public class Fov{
 		
 		//Why can't I put enums in local classes????

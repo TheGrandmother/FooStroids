@@ -12,6 +12,8 @@ import java.io.IOException;
 import javax.swing.DebugGraphics;
 import javax.swing.JFrame;
 
+import astroids.Algorithms.TrivialAi;
+
 /**
  * This is the Main class for the FooStroids thingamagoop.
  * It is as of now fairly basic.
@@ -97,8 +99,9 @@ public class Main extends JFrame implements KeyListener{
 	private void createCrafts(int n){
 		crafts = new Craft[n];
 		for (int i = 0; i < n; i++) {
-			crafts[i] = new Craft(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1), Vu.random(0, 0, 0, 0), new TrivialAi());
-			crafts[i].color = new Color( (int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
+			crafts[i] = new Craft(Vu.random(0, width, 0, height), Vu.random(-1, 1, -1, 1), Vu.random(0, 0, 0, 0));
+			crafts[i].setAi(new TrivialAi(crafts[i]));
+			crafts[i].setColor(new Color( (int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
 			
 			
 		}
@@ -410,9 +413,9 @@ public class Main extends JFrame implements KeyListener{
 	private static String generateColorStats(Craft[] crafts){
 		String s = "{";
 		for (int i = 0; i < crafts.length-1; i++) {
-			s += "{"+crafts[i].color.getRed()+","+crafts[i].color.getGreen() +","+ crafts[i].color.getBlue()+"},";
+			s += "{"+crafts[i].getColor().getRed()+","+crafts[i].getColor().getGreen() +","+ crafts[i].getColor().getBlue()+"},";
 		}
-		s += "{"+crafts[crafts.length-1].color.getRed()+","+crafts[crafts.length-1].color.getGreen() +","+ crafts[crafts.length-1].color.getBlue()+"}}";
+		s += "{"+crafts[crafts.length-1].getColor().getRed()+","+crafts[crafts.length-1].getColor().getGreen() +","+ crafts[crafts.length-1].getColor().getBlue()+"}}";
 		return s;
 	}
 

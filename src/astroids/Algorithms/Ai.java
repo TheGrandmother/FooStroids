@@ -1,11 +1,17 @@
-package astroids;
+package astroids.Algorithms;
 
 import java.awt.Color;
 
-
+import astroids.Craft;
 import astroids.Craft.Fov;
 
-abstract class Ai {
+public abstract class Ai {
+	
+	private final Craft craft; 
+	
+	Ai(Craft craft){
+		this.craft = craft;
+	}
 	
 	public abstract void makeDecision(Craft craft, Fov fov);
 	

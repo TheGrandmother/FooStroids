@@ -20,8 +20,8 @@ public abstract class Objects {
 	 */
 	boolean kill_me = false;
 	int priority;
-	Color color;
-	boolean fires = false;
+	private Color color;
+	private boolean fires = false;
 	final static int craft_score = 1000;
 	final static int asteroid_score = 200;
 	final static int fire_penalty = 2;
@@ -96,6 +96,22 @@ public abstract class Objects {
 	 */
 	public void bounce(double[] normal){
 		setVel(Vu.sub(Vu.mul((2*(Vu.scalarProduct(vel, normal)/Vu.scalarProduct(normal, normal))),normal),vel));
+	}
+
+	public boolean isFires() {
+		return fires;
+	}
+
+	public void setFires(boolean fires) {
+		this.fires = fires;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 	
 	

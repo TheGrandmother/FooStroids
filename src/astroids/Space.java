@@ -65,12 +65,12 @@ public class Space {
 		LinkedList<Objects> tmp = new LinkedList<Objects>();
 		tmp.addAll(object_list);
 		for (Objects obj : object_list) {
-			if(obj.fires == true && obj.getClass() == Craft.class && (time-obj.time > fire_delay)){ 
+			if(obj.isFires() == true && obj.getClass() == Craft.class && (time-obj.time > fire_delay)){ 
 				
 				Missile m = new Missile(Vu.add(obj.getPos(),Vu.mul(20,obj.getDir())), Vu.mul(Missile.speed,obj.getDir()),(Craft)obj);
-				m.color = obj.color;
+				m.setColor(obj.getColor());
 				tmp.addFirst(m);
-				obj.fires = false;
+				obj.setFires(false);
 				obj.time = this.time;
 				((Craft)obj).score -= Objects.fire_penalty;
 			}

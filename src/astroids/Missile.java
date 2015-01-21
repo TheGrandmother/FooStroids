@@ -26,7 +26,7 @@ public class Missile extends Objects {
 		this.pos = pos;
 		this.vel = vel;
 		this.type = Space.Types.MISSILE;
-		this.color = Color.white;
+		this.setColor(Color.white);
 		super.radius = 5;
 		super.priority = 0;
 		this.sender = sender;
@@ -50,7 +50,7 @@ public class Missile extends Objects {
 		g.setColor(Color.white);
 		g.setStroke(new BasicStroke(3));
 		g.drawLine((int)pos[0], (int)pos[1], (int)pos[0]+(int)vel[0]/2, (int)pos[1]+(int)vel[1]/2);
-		g.setColor(color);
+		g.setColor(getColor());
 		g.setStroke(new BasicStroke(2));
 		g.drawLine((int)pos[0], (int)pos[1], (int)pos[0]+(int)vel[0]/2, (int)pos[1]+(int)vel[1]/2);
 //		g.setStroke(new BasicStroke());

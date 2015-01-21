@@ -1,16 +1,18 @@
-package astroids;
+package astroids.Algorithms;
 
 import java.awt.Color;
 import java.util.HashMap;
 
+import astroids.Craft;
+import astroids.Algorithms.Ai.Decision;
 import astroids.Craft.Fov;
 
 public class TrivialAi extends Ai {
 
 	HashMap<Fov, Decision> decision_list = new HashMap<Fov, Decision>(500);
 	
-	public TrivialAi() {
-		
+	public TrivialAi(Craft craft) {
+		super(craft);
 	}
 	
 	
@@ -24,18 +26,18 @@ public class TrivialAi extends Ai {
 		if(dec.deccelerate){craft.decelerate();}
 		if(dec.turn_left){craft.rotateLeft();}
 		if(dec.turn_right){craft.rotateRight();}
-		if(dec.fire){craft.fires = true;}	
+		if(dec.fire){craft.setFires(true);}	
 	}
 
 
 	@Override
 	public void crossover(Craft mummy, double crossover_factor) {
-		if(!(mummy.ai instanceof TrivialAi)){
+		if(!(mummy.getAi() instanceof TrivialAi)){
 			throw new RuntimeException("Cant crossover different Ai types");
 		}
-		for (Fov fov_mum : ((TrivialAi)(mummy.ai)).decision_list.keySet()) {
+		for (Fov fov_mum : ((TrivialAi)(mummy.getAi())).decision_list.keySet()) {
 			if(Math.random() >= crossover_factor){
-				decision_list.put(fov_mum, ((TrivialAi)(mummy.ai)).decision_list.get(fov_mum));
+				decision_list.put(fov_mum, ((TrivialAi)(mummy.getAi())).decision_list.get(fov_mum));
 			}
 		}
 
@@ -46,7 +48,7 @@ public class TrivialAi extends Ai {
 		if(Math.random() <= mutation_probability){
 			int s = (int)(Math.random()*decision_list.size());
 			decision_list.put((Fov) decision_list.keySet().toArray()[s], new Decision());
-			craft.color = new Color(255-craft.color.getRed(),255-craft.color.getGreen(),255-craft.color.getBlue());
+			craft.setColor(new Color(255-craft.getColor().getRed(),255-craft.getColor().getGreen(),255-craft.getColor().getBlue()));
 			
 		}
 	}

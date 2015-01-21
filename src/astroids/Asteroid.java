@@ -10,7 +10,7 @@ public class Asteroid extends Objects {
 		super.vel = vel.clone();
 		super.priority = 4;
 		super.type = Space.Types.ASTEROID;
-		super.color = Color.LIGHT_GRAY;
+		super.setColor(Color.LIGHT_GRAY);
 		super.radius = 20;
 	}
 	
@@ -19,7 +19,7 @@ public class Asteroid extends Objects {
 	}
 	
 	public void draw(Graphics2D g) {
-		g.setColor(color);
+		g.setColor(getColor());
 		g.fillOval((int)pos[0]-(int)radius, (int)pos[1]-(int)radius, (int)radius*2, (int)radius*2);
 	}
 	
